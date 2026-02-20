@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GoMaster Go Academy — Student Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+:root{--navy:#111c3f;--blue:#2a5298;--ink:#121a2e;--muted:#66718a;--line:#e3e9f7;--card:#fff;--bg:#eef2fb;--gold:#f0a500;--violet:#7c3aed;--danger:#e74c3c;--ok:#2ecc71;--sidebar:290px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink)}
+.hidden{display:none!important}
+#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 20% 20%,#2e4f96 0,#111c3f 58%)}
+.auth-box{width:100%;max-width:460px;background:#fff;border-radius:22px;padding:36px;box-shadow:0 18px 55px rgba(0,0,0,.24)}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:8px}.logo-badge{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--gold),#e08700);font-weight:700;color:#1d2333}
+.auth-title{font-family:'Playfair Display',serif;font-size:24px;color:var(--navy)}.auth-sub{font-size:13px;color:var(--muted);margin:6px 0 20px}
+label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:12px 0 6px}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:inherit;background:#fff}
+textarea{min-height:78px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:none;border-color:#90a3d8;box-shadow:0 0 0 3px rgba(42,82,152,.12)}
+.btn{border:none;border-radius:999px;padding:10px 15px;font:inherit;font-weight:700;cursor:pointer}.btn-primary{background:linear-gradient(135deg,var(--blue),var(--navy));color:#fff;width:100%;margin-top:14px}
+.btn-violet{background:var(--violet);color:#fff}.btn-soft{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.35)}
+.auth-error{font-size:13px;color:var(--danger);margin-top:10px;min-height:18px}
+#app-shell{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
+.sidebar{background:#0f1f46;color:#fff;padding:22px 18px;display:flex;flex-direction:column}
+.sidebar h2{font-family:'Playfair Display',serif;font-size:19px;line-height:1.25}.sidebar small{font-size:11px;opacity:.5;letter-spacing:.12em;text-transform:uppercase}
+.nav{margin:24px 0;display:flex;flex-direction:column;gap:6px}
+.nav-item{background:transparent;color:rgba(255,255,255,.72);border:none;border-radius:9px;padding:11px 12px;text-align:left;font:inherit;font-weight:600;cursor:pointer}
+.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.11);color:#fff}
+.admin-room{margin-top:auto;background:linear-gradient(140deg,rgba(124,58,237,.32),rgba(124,58,237,.18));border:1px solid rgba(196,181,253,.65);border-radius:14px;padding:14px}
+.admin-room h3{font-size:14px;margin-bottom:6px}.admin-room p{font-size:12px;opacity:.9;margin-bottom:10px;line-height:1.45}
+.admin-room .btn{width:100%;margin-top:8px}.main{display:flex;flex-direction:column}
+.topbar{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:9}
+.top-title h1{font-family:'Playfair Display',serif;font-size:22px;color:var(--navy)}.top-title p{font-size:12px;color:var(--muted)}.teacher-pill{background:var(--violet);color:#fff;border-radius:999px;font-size:11px;font-weight:700;padding:5px 10px}
+.page-content{padding:26px;display:flex;flex-direction:column;gap:18px}.page{display:none;flex-direction:column;gap:18px}.page.active{display:flex}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}.card-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.card-head h3{font-size:15px;color:var(--navy)}.card-body{padding:16px}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.big{font-family:'Playfair Display',serif;font-size:28px;color:var(--navy)}.sub{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.welcome{background:linear-gradient(135deg,#172d63,#2a5298);color:#fff;padding:26px;border-radius:18px;display:flex;justify-content:space-between;align-items:center;gap:16px}.welcome h2{font-family:'Playfair Display',serif;font-size:24px}.welcome p{opacity:.85;max-width:620px;line-height:1.6;font-size:14px}.welcome .btn{background:var(--gold);color:#1d2333}
+.table{width:100%;border-collapse:collapse}.table th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding-bottom:10px;border-bottom:1px solid var(--line)}.table td{padding:10px 0;border-bottom:1px solid #f1f4fb;font-size:14px}
+.progress{height:8px;border-radius:999px;background:#e8eefc;overflow:hidden;margin-top:6px}.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--blue),#5079ca)}.progress.gold>span{background:linear-gradient(90deg,var(--gold),#e18800)}
+.pill{font-size:11px;font-weight:700;border-radius:999px;padding:4px 10px;display:inline-block}.pill.green{background:#e9f9ef;color:#1f9b54}.pill.red{background:#fff0f0;color:var(--danger)}.pill.blue{background:#e9effe;color:#2852a0}
+[data-edit]{white-space:pre-wrap;line-height:1.65;border-radius:8px}body.teacher-mode [data-edit]{outline:1.5px dashed #c4b5fd;background:#faf7ff;padding:6px}
+.t-panel{display:none;background:linear-gradient(135deg,#f5efff,#efe5ff);border:1px solid #cdbcfb;border-radius:14px;padding:14px}.t-panel.show{display:block}
+.t-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tiny{font-size:12px;color:var(--muted)}.btn-mini{padding:5px 10px;border-radius:8px;font-size:11px;font-weight:700}.btn-danger{background:#ffe8e8;color:#b63a3a;border:1px solid #ffc8c8}.btn-edit{background:#eceffd;color:#29407c;border:1px solid #d4def9}
+.action-row{display:flex;gap:8px;flex-wrap:wrap}
+.toast{position:fixed;right:16px;bottom:16px;background:#0f1f46;color:#fff;border-radius:10px;padding:10px 12px;opacity:0;transform:translateY(10px);transition:.2s;z-index:99}.toast.show{opacity:1;transform:translateY(0)}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;z-index:100}.modal-card{width:min(390px,92vw);background:#fff;border-radius:16px;padding:22px}.modal-card h3{font-family:'Playfair Display',serif;color:var(--navy);margin-bottom:6px}.modal-card p{font-size:13px;color:var(--muted);margin-bottom:12px}.modal-actions{display:flex;gap:8px;margin-top:14px}.modal-actions .btn{flex:1}.editor-modal{width:min(760px,96vw);max-height:86vh;overflow:auto}.editor-wrap{display:grid;grid-template-columns:190px 1fr;gap:12px}.editor-tabs{display:flex;flex-direction:column;gap:8px}.e-tab{border:1px solid var(--line);background:#f8faff;border-radius:9px;padding:8px 10px;text-align:left;font-weight:600;cursor:pointer}.e-tab.active{background:#eceffd;border-color:#cddaf8}.editor-panel{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fff}.editor-panel label{margin-top:0}.editor-title{font-size:13px;color:var(--muted);margin-bottom:8px}
+@media(max-width:980px){#app-shell{grid-template-columns:1fr}.kpi{grid-template-columns:1fr 1fr}.grid-2,.grid-3,.t-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="auth-screen">
+  <div class="auth-box">
+    <div class="logo"><div class="logo-badge">⬡</div><div><div class="auth-title">GoMaster Academy</div><div style="font-size:12px;color:var(--muted)">Student Portal</div></div></div>
+    <p class="auth-sub">Sign in only. Enter the credentials your teacher provided.</p>
+    <label>Email</label><input id="login-email" type="email" autocomplete="username" />
+    <label>Password</label><input id="login-password" type="password" autocomplete="current-password" minlength="6" onkeydown="if(event.key==='Enter')doLogin()" />
+    <button id="login-btn" class="btn btn-primary" onclick="doLogin()" disabled>Sign In</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<div id="app-shell" class="hidden">
+  <aside class="sidebar">
+    <h2>GoMaster<br/>Go Academy</h2><small>Student Portal</small>
+    <div class="nav" id="nav">
+      <button class="nav-item active" data-page="dashboard">⊞ Dashboard</button>
+      <button class="nav-item" data-page="schedule">📅 Schedule</button>
+      <button class="nav-item" data-page="lessons">📖 Lessons</button>
+      <button class="nav-item" data-page="progress">📈 Progress</button>
+      <button class="nav-item" data-page="tournaments">🏆 Tournaments</button>
+      <button class="nav-item" data-page="announcements">📢 Announcements</button>
+      <button class="nav-item" data-page="profile">👤 Profile</button>
+    </div>
+    <div class="admin-room">
+      <h3>🛡️ Admin Room</h3>
+      <p>Teacher mode unlocks full edit access to student data, progress, rank, and all records.</p>
+      <button id="enter-teacher" class="btn btn-violet">Enter as Teacher</button>
+      <button id="signout-teacher" class="btn btn-soft hidden">Sign out as Teacher</button>
+      <button id="save-all" class="btn btn-soft hidden">Save Teacher Edits</button>
+    </div>
+    <button id="logout" class="btn btn-soft" style="margin-top:10px">Sign Out</button>
+  </aside>
+
+  <main class="main">
+    <header class="topbar"><div class="top-title"><h1 id="page-title">Dashboard</h1><p id="page-sub">Your academy overview</p></div><span id="teacher-pill" class="teacher-pill hidden">TEACHER MODE</span></header>
+    <div class="page-content">
+      <section class="page active" id="page-dashboard">
+        <div class="welcome"><div><h2 id="welcome-text">Welcome back!</h2><p data-edit="coachNarrative"></p></div><button class="btn" onclick="openPage('schedule')">View Schedule</button></div>
+        <div class="kpi">
+          <div class="card"><div class="card-body"><div class="big" data-bind="sessionsAttended"></div><div class="sub">Sessions Attended</div></div></div>
+          <div class="card"><div class="card-body"><div class="big" data-bind="tournamentsRegistered"></div><div class="sub">Tournaments Registered</div></div></div>
+          <div class="card"><div class="card-body"><div class="big"><span data-bind="attendanceRate"></span>%</div><div class="sub">Attendance Rate</div></div></div>
+          <div class="card"><div class="card-body"><div class="big" data-bind="rank"></div><div class="sub">Current Rank</div></div></div>
+        </div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><h3>Skill Focus This Week</h3></div><div class="card-body" id="skills-dash"></div></div>
+          <div class="card"><div class="card-head"><h3>Upcoming Events</h3></div><div class="card-body" data-edit="eventsDetail"></div></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-schedule">
+        <div class="grid-2"><div class="card"><div class="card-head"><h3>School Sessions</h3></div><div class="card-body" data-edit="scheduleDetail"></div></div><div class="card"><div class="card-head"><h3>Club Hours</h3></div><div class="card-body" data-edit="clubHoursDetail"></div></div></div>
+        <div class="card"><div class="card-head"><h3>Attendance Record</h3></div><div class="card-body"><table class="table"><thead><tr><th>Date</th><th>Day</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody id="attendance-tbody"></tbody></table></div></div>
+        <div class="t-panel" id="attendance-panel"><div class="tiny">Add New Attendance Record</div><div class="t-row"><input id="new-att-date" placeholder="Mar 05, 2026"/><input id="new-att-day" placeholder="Thursday"/><input id="new-att-type" placeholder="School Session"/><select id="new-att-status"><option value="present">present</option><option value="absent">absent</option></select></div><div class="action-row" style="margin-top:8px"><button class="btn btn-violet" onclick="addAttendanceRecord()">+ New Attendance</button></div></div>
+      </section>
+
+      <section class="page" id="page-lessons">
+        <div class="grid-3" id="lesson-cards"></div>
+        <div class="card"><div class="card-head"><h3>Curriculum Breakdown</h3></div><div class="card-body"><table class="table"><thead><tr><th>Lesson</th><th>Module</th><th>Status</th><th>Score</th><th>Progress</th><th>Actions</th></tr></thead><tbody id="curriculum-tbody"></tbody></table></div></div>
+        <div class="t-panel" id="lesson-panel"><div class="tiny">Add New Lesson Item</div><div class="t-row"><input id="new-lesson-title" placeholder="Lesson title"/><input id="new-lesson-module" placeholder="Module"/><select id="new-lesson-status"><option>progress</option><option>done</option><option>locked</option></select><input id="new-lesson-pct" type="number" min="0" max="100" placeholder="Progress %"/></div><div class="action-row" style="margin-top:8px"><button class="btn btn-violet" onclick="addLesson()">+ New Lesson</button></div></div>
+      </section>
+
+      <section class="page" id="page-progress">
+        <div class="grid-2"><div class="card"><div class="card-head"><h3>Rank Journey</h3></div><div class="card-body"><div class="big" data-bind="rank"></div><div class="tiny"><span data-bind="rankPoints"></span> ranking points</div><div class="progress gold"><span id="rank-progress"></span></div></div></div><div class="card"><div class="card-head"><h3>Coach Performance Notes</h3></div><div class="card-body" data-edit="performanceNotes"></div></div></div>
+        <div class="card"><div class="card-head"><h3>Skill Breakdown</h3></div><div class="card-body" id="skills-progress"></div></div>
+        <div class="t-panel" id="progress-panel">
+          <div class="tiny">Edit Rank / Overall Progress / Skills</div>
+          <div class="t-row">
+            <input id="edit-rank" placeholder="Rank e.g. 21 kyu"/>
+            <input id="edit-rank-points" type="number" min="0" max="200" placeholder="Rank points"/>
+            <input id="new-skill-name" placeholder="New skill name"/>
+            <input id="new-skill-pct" type="number" min="0" max="100" placeholder="Skill %"/>
+          </div>
+          <div class="action-row" style="margin-top:8px"><button class="btn btn-violet" onclick="applyProgressEdits()">Apply Progress + Rank</button><button class="btn btn-violet" onclick="addSkill()">+ New Skill</button></div>
+        </div>
+      </section>
+
+      <section class="page" id="page-tournaments">
+        <div class="card"><div class="card-head"><h3>Tournaments</h3></div><div class="card-body"><table class="table"><thead><tr><th>Name</th><th>Date</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody id="tournament-tbody"></tbody></table></div></div>
+        <div class="card"><div class="card-head"><h3>Tournament Rules & Policy</h3></div><div class="card-body" data-edit="policyDetail"></div></div>
+        <div class="t-panel" id="tournament-panel"><div class="tiny">Add New Tournament</div><div class="t-row"><input id="new-tour-name" placeholder="Tournament name"/><input id="new-tour-date" placeholder="Apr 07, 2026"/><select id="new-tour-type"><option>obligatory</option><option>optional</option></select><select id="new-tour-status"><option>registered</option><option>eligible</option></select></div><div class="action-row" style="margin-top:8px"><button class="btn btn-violet" onclick="addTournament()">+ New Tournament</button></div></div>
+      </section>
+
+      <section class="page" id="page-announcements">
+        <div class="card"><div class="card-head"><h3>Announcements</h3></div><div class="card-body" data-edit="announcementsDetail"></div></div>
+      </section>
+
+      <section class="page" id="page-profile">
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><h3>Personal Information</h3></div><div class="card-body"><label>Full Name</label><input id="profile-name"/><label>Email</label><input id="profile-email" disabled style="background:#f7faff"/><label>Date of Birth</label><input id="profile-dob" type="date"/><label>Enrollment Date</label><input id="profile-enrolled" disabled style="background:#f7faff"/><button class="btn btn-primary" onclick="saveProfile()">Save Profile</button></div></div>
+          <div class="card"><div class="card-head"><h3>Long-Term Development Plan</h3></div><div class="card-body" data-edit="developmentPlan"></div></div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="modal hidden" id="teacher-modal"><div class="modal-card"><h3>Teacher Access</h3><p>Enter password to unlock editing for every student section.</p><label>Teacher Password</label><input type="password" id="teacher-pw" onkeydown="if(event.key==='Enter')verifyTeacher()"/><div class="auth-error" id="teacher-error"></div><div class="modal-actions"><button class="btn" onclick="closeTeacherModal()">Cancel</button><button class="btn btn-violet" onclick="verifyTeacher()">Unlock</button></div></div></div>
+
+<div class="modal hidden" id="record-editor-modal">
+  <div class="modal-card editor-modal">
+    <h3 id="editor-head">Edit Record</h3>
+    <p id="editor-sub">Update each field in its tab and save.</p>
+    <div class="editor-wrap">
+      <div class="editor-tabs" id="editor-tabs"></div>
+      <div class="editor-panel">
+        <div class="editor-title" id="editor-field-title">Field</div>
+        <div id="editor-field-input"></div>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="closeRecordEditor()">Cancel</button>
+      <button class="btn btn-violet" onclick="saveRecordEditor()">Save Changes</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig={apiKey:"AIzaSyBasETP9cwlo7kdeL-uqYv8lMoojo-t194",authDomain:"gomaster-academy-portal.firebaseapp.com",projectId:"gomaster-academy-portal",storageBucket:"gomaster-academy-portal.firebasestorage.app",messagingSenderId:"724167694045",appId:"1:724167694045:web:f7ea537e0db3d8d5f1ed34",measurementId:"G-QX4G48NZDZ"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const TEACHER_PASSWORD='teacher67go';
+let isTeacher=false,currentUser=null,data=null;
+const meta={dashboard:['Dashboard','Your academy overview'],schedule:['Schedule','Sessions and attendance details'],lessons:['Lessons','Curriculum and module tracking'],progress:['Progress','Skill and ranking development'],tournaments:['Tournaments','Competition planning and policy'],announcements:['Announcements','Academy updates'],profile:['Profile','Personal information and plan']};
+
+function defaults(name,email){return{name,email,dob:'',enrolledAt:new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),rank:'25 kyu',rankPoints:90,sessionsAttended:17,tournamentsRegistered:2,attendanceRate:89,
+skills:{"Opening Theory":62,"Life & Death":48,"Fuseki Concepts":58,"Tesuji":40,"Endgame":34,"Reading Depth":44},attendance:[{date:'Mar 02, 2026',day:'Sunday',type:'School Session',status:'present'},{date:'Mar 01, 2026',day:'Saturday',type:'School Session',status:'present'},{date:'Feb 28, 2026',day:'Friday',type:'School Session',status:'absent'}],
+lessons:[{title:'Introduction to Direction of Play',module:'Strategy I',status:'done',score:88,pct:100},{title:'Basic Tesuji Patterns',module:'Tactics',status:'progress',score:null,pct:65},{title:'Endgame Counting Basics',module:'Endgame',status:'progress',score:null,pct:44}],
+tournaments:[{name:'GMAT',date:'Mar 20, 2026',type:'obligatory',status:'registered'},{name:'Young Masters',date:'Apr 01, 2026',type:'optional',status:'eligible'}],coachNarrative:'You’re building excellent consistency. Tactical reading improved in the last three weeks, and your shape discipline is cleaner during fights.',eventsDetail:'• GMAT (Obligatory): Mar 20, 2026\n• Young Masters (Optional): Apr 1, 2026\n• Internal Ladder Review: Every second Sunday.',
+scheduleDetail:'Friday 3:00 PM Technical Lesson\nSaturday 3:00 PM Review & Problems\nSunday 3:00 PM Match Play & Analysis',clubHoursDetail:'Mon–Fri 9:00 AM–7:00 PM\nSat 9:00 AM–7:00 PM\nSun 9:00 AM–7:00 PM',performanceNotes:'Reading accuracy improved from 52% to 68%. Endgame counting needs structure: 10 yose problems daily.',policyDetail:'Obligatory events require 7-day absence notice. Optional events depend on age/rank eligibility.',announcementsDetail:'1) Weekend club hours extended until 8:00 PM.\n2) New tsumego pack uploaded.\n3) Friendly ladder every Thursday.',developmentPlan:'Phase 1 (4 weeks): improve tactical reading to 55%.\nPhase 2 (6 weeks): stabilize opening choices.\nPhase 3 (8 weeks): close games with better yose.',createdAt:serverTimestamp(),updatedAt:serverTimestamp()};}
+
+const g=id=>document.getElementById(id); let to;
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); const escAttr=s=>esc(s).replace(/"/g,'&quot;'); const toHtml=s=>esc(s).replace(/\n/g,'<br>');
+function toast(msg){const t=g('toast');t.textContent=msg;t.classList.add('show');clearTimeout(to);to=setTimeout(()=>t.classList.remove('show'),2800)}
+
+function refreshLoginBtn(){const email=g('login-email').value.trim();const pass=g('login-password').value;g('login-btn').disabled=!(email&&pass&&pass.length>=6)}
+g('login-email').addEventListener('input',refreshLoginBtn);g('login-password').addEventListener('input',refreshLoginBtn);
+
+function render(){
+  document.querySelectorAll('[data-bind]').forEach(el=>el.textContent=data?.[el.dataset.bind]??'—');
+  document.querySelectorAll('[data-edit]').forEach(el=>{el.innerHTML=toHtml(data?.[el.dataset.edit]||'');el.contentEditable=String(isTeacher)});
+  g('profile-name').value=data?.name||'';g('profile-email').value=data?.email||'';g('profile-dob').value=data?.dob||'';g('profile-enrolled').value=data?.enrolledAt||'';
+  g('welcome-text').textContent=`Welcome back, ${(data?.name||'Student').split(' ')[0]}!`; g('rank-progress').style.width=Math.min((data?.rankPoints||0)/2,100)+'%';
+  const skills=Object.entries(data?.skills||{});
+  g('skills-dash').innerHTML=skills.map(([k,v])=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:13px"><span>${esc(k)}</span><strong>${v}%</strong></div><div class="progress"><span style="width:${v}%"></span></div></div>`).join('');
+  g('skills-progress').innerHTML=skills.map(([k,v],i)=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px;align-items:center"><span>${esc(k)}</span><div style="display:flex;align-items:center;gap:8px"><strong>${v}%</strong>${isTeacher?`<button class=\"btn-mini btn-edit\" onclick=\"editSkill(${i})\">Edit</button><button class=\"btn-mini btn-danger\" onclick=\"deleteSkill(${i})\">Delete</button>`:''}</div></div><div class="progress ${i%2?'gold':''}"><span style="width:${v}%"></span></div></div>`).join('');
+  g('attendance-tbody').innerHTML=(data?.attendance||[]).map((a,i)=>`<tr><td>${esc(a.date)}</td><td>${esc(a.day)}</td><td>${esc(a.type)}</td><td><span class="pill ${a.status==='present'?'green':'red'}">${a.status}</span></td><td>${isTeacher?`<button class=\"btn-mini btn-edit\" onclick=\"editAttendance(${i})\">Edit</button> <button class=\"btn-mini btn-danger\" onclick=\"deleteAttendance(${i})\">Delete</button>`:''}</td></tr>`).join('');
+  const sm={done:'<span class="pill green">done</span>',progress:'<span class="pill blue">progress</span>',locked:'<span class="pill red">locked</span>'};
+  g('lesson-cards').innerHTML=(data?.lessons||[]).map(l=>`<div class="card"><div class="card-body"><div class="tiny" style="text-transform:uppercase">${esc(l.module)}</div><div style="font-weight:700;margin-top:6px">${esc(l.title)}</div><div class="progress" style="margin-top:10px"><span style="width:${l.pct||0}%"></span></div><div class="tiny">${l.pct||0}% complete</div></div></div>`).join('');
+  g('curriculum-tbody').innerHTML=(data?.lessons||[]).map((l,i)=>`<tr><td>${esc(l.title)}</td><td>${esc(l.module)}</td><td>${sm[l.status]||esc(l.status)}</td><td>${l.score==null?'—':l.score+'%'}</td><td>${l.pct||0}%</td><td>${isTeacher?`<button class=\"btn-mini btn-edit\" onclick=\"editLesson(${i})\">Edit</button> <button class=\"btn-mini btn-danger\" onclick=\"deleteLesson(${i})\">Delete</button>`:''}</td></tr>`).join('');
+  g('tournament-tbody').innerHTML=(data?.tournaments||[]).map((t,i)=>`<tr><td>${esc(t.name)}</td><td>${esc(t.date)}</td><td><span class="pill ${t.type==='obligatory'?'red':'blue'}">${esc(t.type)}</span></td><td><span class="pill ${t.status==='registered'?'green':'blue'}">${esc(t.status)}</span></td><td>${isTeacher?`<button class=\"btn-mini btn-edit\" onclick=\"editTournament(${i})\">Edit</button> <button class=\"btn-mini btn-danger\" onclick=\"deleteTournament(${i})\">Delete</button>`:''}</td></tr>`).join('');
+  g('edit-rank').value=data?.rank||''; g('edit-rank-points').value=data?.rankPoints??0;
+}
+
+function collectEditable(){document.querySelectorAll('[data-edit]').forEach(el=>{data[el.dataset.edit]=el.innerText})}
+async function persist(){data.updatedAt=serverTimestamp();await updateDoc(doc(db,'students',currentUser.uid),data)}
+
+window.addAttendanceRecord=()=>{if(!isTeacher) return toast('Teacher mode required.');const row={date:g('new-att-date').value||'Unknown',day:g('new-att-day').value||'—',type:g('new-att-type').value||'Session',status:g('new-att-status').value};data.attendance.unshift(row);const p=data.attendance.filter(x=>x.status==='present').length;data.sessionsAttended=p;data.attendanceRate=Math.round(p/data.attendance.length*100);render();};
+window.addLesson=()=>{if(!isTeacher)return toast('Teacher mode required.');data.lessons.push({title:g('new-lesson-title').value||'New Lesson',module:g('new-lesson-module').value||'General',status:g('new-lesson-status').value,pct:Math.min(100,Math.max(0,parseInt(g('new-lesson-pct').value||0))),score:null});render();};
+window.addTournament=()=>{if(!isTeacher)return toast('Teacher mode required.');data.tournaments.push({name:g('new-tour-name').value||'New Tournament',date:g('new-tour-date').value||'TBD',type:g('new-tour-type').value,status:g('new-tour-status').value});data.tournamentsRegistered=(data.tournaments||[]).filter(t=>t.status==='registered').length;render();};
+window.applyProgressEdits=()=>{if(!isTeacher)return toast('Teacher mode required.');data.rank=g('edit-rank').value||data.rank;data.rankPoints=Math.min(200,Math.max(0,parseInt(g('edit-rank-points').value||0)));render();};
+window.addSkill=()=>{if(!isTeacher)return toast('Teacher mode required.');const n=g('new-skill-name').value.trim();if(!n)return toast('Skill name required.');data.skills[n]=Math.min(100,Math.max(0,parseInt(g('new-skill-pct').value||0)));render();};
+
+window.deleteAttendance=(i)=>{if(!isTeacher)return;data.attendance.splice(i,1);const p=data.attendance.filter(x=>x.status==='present').length;data.sessionsAttended=p;data.attendanceRate=data.attendance.length?Math.round(p/data.attendance.length*100):0;render();};
+window.editAttendance=(i)=>openRecordEditor('attendance',i);
+window.deleteLesson=(i)=>{if(!isTeacher)return;data.lessons.splice(i,1);render();};
+window.editLesson=(i)=>openRecordEditor('lesson',i);
+window.deleteTournament=(i)=>{if(!isTeacher)return;data.tournaments.splice(i,1);data.tournamentsRegistered=(data.tournaments||[]).filter(t=>t.status==='registered').length;render();};
+window.editTournament=(i)=>openRecordEditor('tournament',i);
+window.deleteSkill=(i)=>{if(!isTeacher)return;const key=Object.keys(data.skills||{})[i];if(!key)return;delete data.skills[key];render();};
+window.editSkill=(i)=>openRecordEditor('skill',i);
+
+let editorState={type:null,index:null,fields:[],draft:{},tab:0};
+function schemaFor(type,index){
+  if(type==='attendance'){const a=data.attendance[index];return {title:'Edit Attendance Record',fields:[{k:'date',label:'Date',t:'text'},{k:'day',label:'Day',t:'text'},{k:'type',label:'Type',t:'text'},{k:'status',label:'Status',t:'select',opts:['present','absent']}],obj:{...a}};}
+  if(type==='lesson'){const l=data.lessons[index];return {title:'Edit Lesson',fields:[{k:'title',label:'Lesson Title',t:'text'},{k:'module',label:'Module',t:'text'},{k:'status',label:'Status',t:'select',opts:['done','progress','locked']},{k:'pct',label:'Progress %',t:'number'},{k:'score',label:'Score % (blank allowed)',t:'number'}],obj:{...l,score:l.score??''}};}
+  if(type==='tournament'){const t=data.tournaments[index];return {title:'Edit Tournament',fields:[{k:'name',label:'Name',t:'text'},{k:'date',label:'Date',t:'text'},{k:'type',label:'Type',t:'select',opts:['obligatory','optional']},{k:'status',label:'Status',t:'select',opts:['registered','eligible']}],obj:{...t}};}
+  if(type==='skill'){const key=Object.keys(data.skills||{})[index];return {title:'Edit Skill',fields:[{k:'name',label:'Skill Name',t:'text'},{k:'pct',label:'Skill %',t:'number'}],obj:{name:key,pct:data.skills[key]}};}
+  return {title:'Edit',fields:[],obj:{}};
+}
+
+window.openRecordEditor=(type,index)=>{
+  if(!isTeacher)return toast('Teacher mode required.');
+  const cfg=schemaFor(type,index);
+  editorState={type,index,fields:cfg.fields,draft:cfg.obj,tab:0};
+  g('editor-head').textContent=cfg.title;
+  g('editor-sub').textContent='Use the tabs to edit each piece of information.';
+  renderEditorTabs();
+  g('record-editor-modal').classList.remove('hidden');
+};
+window.closeRecordEditor=()=>g('record-editor-modal').classList.add('hidden');
+
+function renderEditorTabs(){
+  const tabs=g('editor-tabs');
+  tabs.innerHTML=editorState.fields.map((f,i)=>`<button class="e-tab ${i===editorState.tab?'active':''}" onclick="switchEditorTab(${i})">${esc(f.label)}</button>`).join('');
+  renderEditorField();
+}
+window.switchEditorTab=(i)=>{editorState.tab=i;renderEditorTabs();};
+function renderEditorField(){
+  const f=editorState.fields[editorState.tab];
+  g('editor-field-title').textContent=f.label;
+  const v=editorState.draft[f.k]??'';
+  if(f.t==='select'){
+    g('editor-field-input').innerHTML=`<select id="editor-live-input">${f.opts.map(o=>`<option ${String(v)===o?'selected':''}>${o}</option>`).join('')}</select>`;
+  }else{
+    g('editor-field-input').innerHTML=`<input id="editor-live-input" type="${f.t==='number'?'number':'text'}" value="${escAttr(v)}" />`;
+  }
+  g('editor-live-input').addEventListener('input',e=>{editorState.draft[f.k]=e.target.value;});
+}
+
+window.saveRecordEditor=()=>{
+  const {type,index,draft}=editorState;
+  if(type==='attendance'){data.attendance[index]={date:draft.date||'',day:draft.day||'',type:draft.type||'',status:draft.status==='absent'?'absent':'present'};const p=data.attendance.filter(x=>x.status==='present').length;data.sessionsAttended=p;data.attendanceRate=data.attendance.length?Math.round(p/data.attendance.length*100):0;}
+  if(type==='lesson'){data.lessons[index]={...data.lessons[index],title:draft.title||'',module:draft.module||'',status:['done','progress','locked'].includes(draft.status)?draft.status:'progress',pct:Math.max(0,Math.min(100,parseInt(draft.pct||0)||0)),score:draft.score===''?null:parseInt(draft.score)||null};}
+  if(type==='tournament'){data.tournaments[index]={name:draft.name||'',date:draft.date||'',type:draft.type==='obligatory'?'obligatory':'optional',status:draft.status==='registered'?'registered':'eligible'};data.tournamentsRegistered=(data.tournaments||[]).filter(t=>t.status==='registered').length;}
+  if(type==='skill'){const oldKey=Object.keys(data.skills||{})[index];if(oldKey)delete data.skills[oldKey];const nm=(draft.name||'New Skill').trim();data.skills[nm]=Math.max(0,Math.min(100,parseInt(draft.pct||0)||0));}
+  closeRecordEditor();
+  render();
+};
+
+window.saveProfile=async()=>{const name=g('profile-name').value.trim();if(!name)return toast('Name is required.');data.name=name;data.dob=g('profile-dob').value;await updateDoc(doc(db,'students',currentUser.uid),{name:data.name,dob:data.dob,updatedAt:serverTimestamp()});render();toast('Profile saved.');};
+window.doLogin=async()=>{const email=g('login-email').value.trim(),pass=g('login-password').value;g('auth-error').textContent='';if(!email||!pass){g('auth-error').textContent='Email and password are required.';return}if(pass.length<6){g('auth-error').textContent='Password must be at least 6 characters.';return}
+try{await signInWithEmailAndPassword(auth,email,pass)}catch{g('auth-error').textContent='Invalid email or password.'}}
+
+function enterTeacher(){isTeacher=true;document.body.classList.add('teacher-mode');g('teacher-pill').classList.remove('hidden');g('enter-teacher').classList.add('hidden');g('signout-teacher').classList.remove('hidden');g('save-all').classList.remove('hidden');document.querySelectorAll('.t-panel').forEach(x=>x.classList.add('show'));render();toast('Teacher mode enabled.')} 
+function exitTeacher(){isTeacher=false;document.body.classList.remove('teacher-mode');g('teacher-pill').classList.add('hidden');g('enter-teacher').classList.remove('hidden');g('signout-teacher').classList.add('hidden');g('save-all').classList.add('hidden');document.querySelectorAll('.t-panel').forEach(x=>x.classList.remove('show'));render();}
+window.openTeacherModal=()=>{g('teacher-modal').classList.remove('hidden');g('teacher-pw').value='';g('teacher-error').textContent='';setTimeout(()=>g('teacher-pw').focus(),30)};window.closeTeacherModal=()=>g('teacher-modal').classList.add('hidden');window.verifyTeacher=()=>{if(g('teacher-pw').value===TEACHER_PASSWORD){closeTeacherModal();enterTeacher()}else g('teacher-error').textContent='Incorrect password.'}
+
+window.openPage=(key)=>{document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===key));document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===`page-${key}`));g('page-title').textContent=meta[key][0];g('page-sub').textContent=meta[key][1]}
+
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>openPage(n.dataset.page)));g('enter-teacher').addEventListener('click',openTeacherModal);g('signout-teacher').addEventListener('click',()=>{exitTeacher();toast('Signed out as Teacher.')});
+g('save-all').addEventListener('click',async()=>{if(!isTeacher)return toast('Teacher mode required.');collectEditable();await persist();toast('All teacher edits saved to Firestore.')});
+g('logout').addEventListener('click',async()=>{exitTeacher();await signOut(auth)});
+
+onAuthStateChanged(auth,async user=>{if(!user){currentUser=null;g('auth-screen').classList.remove('hidden');g('app-shell').classList.add('hidden');return}currentUser=user;const ref=doc(db,'students',user.uid);let snap=await getDoc(ref);if(!snap.exists()){await setDoc(ref,defaults(user.displayName||user.email.split('@')[0],user.email));snap=await getDoc(ref)}data=snap.data();if(!data.tournaments)data.tournaments=[];render();g('auth-screen').classList.add('hidden');g('app-shell').classList.remove('hidden')});
+</script>
+</body>
+</html>
