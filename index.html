@@ -44,6 +44,11 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:#90a3d8;box-sh
 .t-panel{display:none;background:linear-gradient(135deg,#f5efff,#efe5ff);border:1px solid #cdbcfb;border-radius:14px;padding:14px}.t-panel.show{display:block}
 .t-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tiny{font-size:12px;color:var(--muted)}.btn-mini{padding:5px 10px;border-radius:8px;font-size:11px;font-weight:700}.btn-danger{background:#ffe8e8;color:#b63a3a;border:1px solid #ffc8c8}.btn-edit{background:#eceffd;color:#29407c;border:1px solid #d4def9}
 .action-row{display:flex;gap:8px;flex-wrap:wrap}
+.bracket{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.round-col{background:#f8faff;border:1px solid #dfe6f7;border-radius:12px;padding:10px}
+.round-col h4{font-size:13px;color:var(--navy);margin-bottom:8px}
+.branch{border:1px solid #dfe6f7;background:#fff;border-radius:10px;padding:10px;margin-bottom:8px}
+.branch-title{font-size:12px;color:var(--muted);margin-bottom:6px}
 .toast{position:fixed;right:16px;bottom:16px;background:#0f1f46;color:#fff;border-radius:10px;padding:10px 12px;opacity:0;transform:translateY(10px);transition:.2s;z-index:99}.toast.show{opacity:1;transform:translateY(0)}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;z-index:100}.modal-card{width:min(390px,92vw);background:#fff;border-radius:16px;padding:22px}.modal-card h3{font-family:'Playfair Display',serif;color:var(--navy);margin-bottom:6px}.modal-card p{font-size:13px;color:var(--muted);margin-bottom:12px}.modal-actions{display:flex;gap:8px;margin-top:14px}.modal-actions .btn{flex:1}.editor-modal{width:min(760px,96vw);max-height:86vh;overflow:auto}.editor-wrap{display:grid;grid-template-columns:190px 1fr;gap:12px}.editor-tabs{display:flex;flex-direction:column;gap:8px}.e-tab{border:1px solid var(--line);background:#f8faff;border-radius:9px;padding:8px 10px;text-align:left;font-weight:600;cursor:pointer}.e-tab.active{background:#eceffd;border-color:#cddaf8}.editor-panel{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fff}.editor-panel label{margin-top:0}.editor-title{font-size:13px;color:var(--muted);margin-bottom:8px}
 @media(max-width:980px){#app-shell{grid-template-columns:1fr}.kpi{grid-template-columns:1fr 1fr}.grid-2,.grid-3,.t-row{grid-template-columns:1fr}}
@@ -133,6 +138,22 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:#90a3d8;box-sh
         <div class="t-panel" id="tournament-panel"><div class="tiny">Add New Tournament</div><div class="t-row"><input id="new-tour-name" placeholder="Tournament name"/><input id="new-tour-date" placeholder="Apr 07, 2026"/><select id="new-tour-type"><option>obligatory</option><option>optional</option></select><select id="new-tour-status"><option>registered</option><option>eligible</option></select></div><div class="action-row" style="margin-top:8px"><button class="btn btn-violet" onclick="addTournament()">+ New Tournament</button></div></div>
       </section>
 
+      <section class="page" id="page-tournament-tree">
+        <div class="card">
+          <div class="card-head">
+            <h3 id="tree-title">Tournament Tree</h3>
+            <div class="action-row">
+              <button class="btn-mini btn-edit" onclick="openPage('tournaments')">Back to Tournaments</button>
+              <button id="add-round-btn" class="btn-mini btn-edit hidden" onclick="addTreeRound()">+ Add Branch Column</button>
+            </div>
+          </div>
+          <div class="card-body">
+            <p class="tiny" id="tree-sub">Students can view the bracket. Teacher mode can edit names and branches.</p>
+            <div id="tournament-tree" class="bracket"></div>
+          </div>
+        </div>
+      </section>
+
       <section class="page" id="page-announcements">
         <div class="card"><div class="card-head"><h3>Announcements</h3></div><div class="card-body" data-edit="announcementsDetail"></div></div>
       </section>
@@ -176,23 +197,47 @@ import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "h
 const firebaseConfig={apiKey:"AIzaSyBasETP9cwlo7kdeL-uqYv8lMoojo-t194",authDomain:"gomaster-academy-portal.firebaseapp.com",projectId:"gomaster-academy-portal",storageBucket:"gomaster-academy-portal.firebasestorage.app",messagingSenderId:"724167694045",appId:"1:724167694045:web:f7ea537e0db3d8d5f1ed34",measurementId:"G-QX4G48NZDZ"};
 const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
 const TEACHER_PASSWORD='teacher67go';
-let isTeacher=false,currentUser=null,data=null;
-const meta={dashboard:['Dashboard','Your academy overview'],schedule:['Schedule','Sessions and attendance details'],lessons:['Lessons','Curriculum and module tracking'],progress:['Progress','Skill and ranking development'],tournaments:['Tournaments','Competition planning and policy'],announcements:['Announcements','Academy updates'],profile:['Profile','Personal information and plan']};
+let isTeacher=false,currentUser=null,data=null,currentTournamentIndex=0;
+const meta={dashboard:['Dashboard','Your academy overview'],schedule:['Schedule','Sessions and attendance details'],lessons:['Lessons','Curriculum and module tracking'],progress:['Progress','Skill and ranking development'],tournaments:['Tournaments','Competition planning and policy'],'tournament-tree':['Tournament Tree','Bracket view and branch management'],announcements:['Announcements','Academy updates'],profile:['Profile','Personal information and plan']};
+
+function defaultTree(){
+  return {rounds:[
+    {name:'Quarterfinals',branches:[{name:'Branch A',player1:'Student A',player2:'Student B',winner:'Student A'},{name:'Branch B',player1:'Student C',player2:'Student D',winner:''}]},
+    {name:'Semifinal',branches:[{name:'Branch C',player1:'Winner A',player2:'Winner B',winner:''}]},
+    {name:'Final',branches:[{name:'Championship',player1:'Winner C',player2:'TBD',winner:''}]}
+  ]};
+}
 
 function defaults(name,email){return{name,email,dob:'',enrolledAt:new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),rank:'25 kyu',rankPoints:90,sessionsAttended:17,tournamentsRegistered:2,attendanceRate:89,
 skills:{"Opening Theory":62,"Life & Death":48,"Fuseki Concepts":58,"Tesuji":40,"Endgame":34,"Reading Depth":44},attendance:[{date:'Mar 02, 2026',day:'Sunday',type:'School Session',status:'present'},{date:'Mar 01, 2026',day:'Saturday',type:'School Session',status:'present'},{date:'Feb 28, 2026',day:'Friday',type:'School Session',status:'absent'}],
 lessons:[{title:'Introduction to Direction of Play',module:'Strategy I',status:'done',score:88,pct:100},{title:'Basic Tesuji Patterns',module:'Tactics',status:'progress',score:null,pct:65},{title:'Endgame Counting Basics',module:'Endgame',status:'progress',score:null,pct:44}],
-tournaments:[{name:'GMAT',date:'Mar 20, 2026',type:'obligatory',status:'registered'},{name:'Young Masters',date:'Apr 01, 2026',type:'optional',status:'eligible'}],coachNarrative:'You’re building excellent consistency. Tactical reading improved in the last three weeks, and your shape discipline is cleaner during fights.',eventsDetail:'• GMAT (Obligatory): Mar 20, 2026\n• Young Masters (Optional): Apr 1, 2026\n• Internal Ladder Review: Every second Sunday.',
+tournaments:[{name:'GMAT',date:'Mar 20, 2026',type:'obligatory',status:'registered'},{name:'Young Masters',date:'Apr 01, 2026',type:'optional',status:'eligible'}],
+tournamentTrees:[defaultTree(),defaultTree()],coachNarrative:'You’re building excellent consistency. Tactical reading improved in the last three weeks, and your shape discipline is cleaner during fights.',eventsDetail:'• GMAT (Obligatory): Mar 20, 2026\n• Young Masters (Optional): Apr 1, 2026\n• Internal Ladder Review: Every second Sunday.',
 scheduleDetail:'Friday 3:00 PM Technical Lesson\nSaturday 3:00 PM Review & Problems\nSunday 3:00 PM Match Play & Analysis',clubHoursDetail:'Mon–Fri 9:00 AM–7:00 PM\nSat 9:00 AM–7:00 PM\nSun 9:00 AM–7:00 PM',performanceNotes:'Reading accuracy improved from 52% to 68%. Endgame counting needs structure: 10 yose problems daily.',policyDetail:'Obligatory events require 7-day absence notice. Optional events depend on age/rank eligibility.',announcementsDetail:'1) Weekend club hours extended until 8:00 PM.\n2) New tsumego pack uploaded.\n3) Friendly ladder every Thursday.',developmentPlan:'Phase 1 (4 weeks): improve tactical reading to 55%.\nPhase 2 (6 weeks): stabilize opening choices.\nPhase 3 (8 weeks): close games with better yose.',createdAt:serverTimestamp(),updatedAt:serverTimestamp()};}
 
 const g=id=>document.getElementById(id); let to;
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); const escAttr=s=>esc(s).replace(/"/g,'&quot;'); const toHtml=s=>esc(s).replace(/\n/g,'<br>');
 function toast(msg){const t=g('toast');t.textContent=msg;t.classList.add('show');clearTimeout(to);to=setTimeout(()=>t.classList.remove('show'),2800)}
 
+function ensureTournamentTrees(){
+  if(!Array.isArray(data.tournamentTrees)) data.tournamentTrees=[];
+  while(data.tournamentTrees.length<(data.tournaments||[]).length) data.tournamentTrees.push(defaultTree());
+}
+
 function refreshLoginBtn(){const email=g('login-email').value.trim();const pass=g('login-password').value;g('login-btn').disabled=!(email&&pass&&pass.length>=6)}
 g('login-email').addEventListener('input',refreshLoginBtn);g('login-password').addEventListener('input',refreshLoginBtn);
 
+function renderTournamentTree(){
+  ensureTournamentTrees();
+  const tournament=(data?.tournaments||[])[currentTournamentIndex];
+  const tree=(data?.tournamentTrees||[])[currentTournamentIndex]||defaultTree();
+  g('tree-title').textContent=tournament?`${tournament.name} — Tournament Tree`:'Tournament Tree';
+  g('add-round-btn').classList.toggle('hidden',!isTeacher);
+  g('tournament-tree').innerHTML=(tree.rounds||[]).map((round,roundIndex)=>`<div class="round-col"><h4>${esc(round.name)} ${isTeacher?`<button class="btn-mini btn-edit" onclick="editRoundName(${roundIndex})">Edit</button>`:''}</h4>${(round.branches||[]).map((branch,branchIndex)=>`<div class="branch"><div class="branch-title">${esc(branch.name)}</div><div>${esc(branch.player1)} vs ${esc(branch.player2)}</div><div class="tiny">Winner: ${esc(branch.winner||'TBD')}</div>${isTeacher?`<div class="action-row" style="margin-top:6px"><button class="btn-mini btn-edit" onclick="editBranch(${roundIndex},${branchIndex})">Edit</button><button class="btn-mini btn-danger" onclick="deleteBranch(${roundIndex},${branchIndex})">Delete</button></div>`:''}</div>`).join('')}${isTeacher?`<button class="btn-mini btn-edit" onclick="addBranch(${roundIndex})">+ Add Branch</button>`:''}</div>`).join('');
+}
+
 function render(){
+  ensureTournamentTrees();
   document.querySelectorAll('[data-bind]').forEach(el=>el.textContent=data?.[el.dataset.bind]??'—');
   document.querySelectorAll('[data-edit]').forEach(el=>{el.innerHTML=toHtml(data?.[el.dataset.edit]||'');el.contentEditable=String(isTeacher)});
   g('profile-name').value=data?.name||'';g('profile-email').value=data?.email||'';g('profile-dob').value=data?.dob||'';g('profile-enrolled').value=data?.enrolledAt||'';
@@ -204,16 +249,24 @@ function render(){
   const sm={done:'<span class="pill green">done</span>',progress:'<span class="pill blue">progress</span>',locked:'<span class="pill red">locked</span>'};
   g('lesson-cards').innerHTML=(data?.lessons||[]).map(l=>`<div class="card"><div class="card-body"><div class="tiny" style="text-transform:uppercase">${esc(l.module)}</div><div style="font-weight:700;margin-top:6px">${esc(l.title)}</div><div class="progress" style="margin-top:10px"><span style="width:${l.pct||0}%"></span></div><div class="tiny">${l.pct||0}% complete</div></div></div>`).join('');
   g('curriculum-tbody').innerHTML=(data?.lessons||[]).map((l,i)=>`<tr><td>${esc(l.title)}</td><td>${esc(l.module)}</td><td>${sm[l.status]||esc(l.status)}</td><td>${l.score==null?'—':l.score+'%'}</td><td>${l.pct||0}%</td><td>${isTeacher?`<button class=\"btn-mini btn-edit\" onclick=\"editLesson(${i})\">Edit</button> <button class=\"btn-mini btn-danger\" onclick=\"deleteLesson(${i})\">Delete</button>`:''}</td></tr>`).join('');
-  g('tournament-tbody').innerHTML=(data?.tournaments||[]).map((t,i)=>`<tr><td>${esc(t.name)}</td><td>${esc(t.date)}</td><td><span class="pill ${t.type==='obligatory'?'red':'blue'}">${esc(t.type)}</span></td><td><span class="pill ${t.status==='registered'?'green':'blue'}">${esc(t.status)}</span></td><td>${isTeacher?`<button class=\"btn-mini btn-edit\" onclick=\"editTournament(${i})\">Edit</button> <button class=\"btn-mini btn-danger\" onclick=\"deleteTournament(${i})\">Delete</button>`:''}</td></tr>`).join('');
+  g('tournament-tbody').innerHTML=(data?.tournaments||[]).map((t,i)=>`<tr><td>${esc(t.name)}</td><td>${esc(t.date)}</td><td><span class="pill ${t.type==='obligatory'?'red':'blue'}">${esc(t.type)}</span></td><td><span class="pill ${t.status==='registered'?'green':'blue'}">${esc(t.status)}</span></td><td><button class=\"btn-mini btn-edit\" onclick=\"viewTournament(${i})\">View Tournament</button>${isTeacher?` <button class=\"btn-mini btn-edit\" onclick=\"editTournament(${i})\">Edit</button> <button class=\"btn-mini btn-danger\" onclick=\"deleteTournament(${i})\">Delete</button>`:''}</td></tr>`).join('');
   g('edit-rank').value=data?.rank||''; g('edit-rank-points').value=data?.rankPoints??0;
+  renderTournamentTree();
 }
 
 function collectEditable(){document.querySelectorAll('[data-edit]').forEach(el=>{data[el.dataset.edit]=el.innerText})}
 async function persist(){data.updatedAt=serverTimestamp();await updateDoc(doc(db,'students',currentUser.uid),data)}
 
+window.viewTournament=(i)=>{currentTournamentIndex=i;openPage('tournament-tree');renderTournamentTree();};
+window.editRoundName=(roundIndex)=>openRecordEditor('tree-round',roundIndex);
+window.editBranch=(roundIndex,branchIndex)=>openRecordEditor('tree-branch',`${roundIndex}:${branchIndex}`);
+window.addBranch=(roundIndex)=>{if(!isTeacher)return toast('Teacher mode required.');data.tournamentTrees[currentTournamentIndex].rounds[roundIndex].branches.push({name:'New Branch',player1:'TBD',player2:'TBD',winner:''});renderTournamentTree();};
+window.deleteBranch=(roundIndex,branchIndex)=>{if(!isTeacher)return toast('Teacher mode required.');const branches=data.tournamentTrees[currentTournamentIndex].rounds[roundIndex].branches;if(!branches?.length)return;branches.splice(branchIndex,1);renderTournamentTree();};
+window.addTreeRound=()=>{if(!isTeacher)return toast('Teacher mode required.');data.tournamentTrees[currentTournamentIndex].rounds.push({name:`Round ${data.tournamentTrees[currentTournamentIndex].rounds.length+1}`,branches:[{name:'New Branch',player1:'TBD',player2:'TBD',winner:''}]});renderTournamentTree();};
+
 window.addAttendanceRecord=()=>{if(!isTeacher) return toast('Teacher mode required.');const row={date:g('new-att-date').value||'Unknown',day:g('new-att-day').value||'—',type:g('new-att-type').value||'Session',status:g('new-att-status').value};data.attendance.unshift(row);const p=data.attendance.filter(x=>x.status==='present').length;data.sessionsAttended=p;data.attendanceRate=Math.round(p/data.attendance.length*100);render();};
 window.addLesson=()=>{if(!isTeacher)return toast('Teacher mode required.');data.lessons.push({title:g('new-lesson-title').value||'New Lesson',module:g('new-lesson-module').value||'General',status:g('new-lesson-status').value,pct:Math.min(100,Math.max(0,parseInt(g('new-lesson-pct').value||0))),score:null});render();};
-window.addTournament=()=>{if(!isTeacher)return toast('Teacher mode required.');data.tournaments.push({name:g('new-tour-name').value||'New Tournament',date:g('new-tour-date').value||'TBD',type:g('new-tour-type').value,status:g('new-tour-status').value});data.tournamentsRegistered=(data.tournaments||[]).filter(t=>t.status==='registered').length;render();};
+window.addTournament=()=>{if(!isTeacher)return toast('Teacher mode required.');data.tournaments.push({name:g('new-tour-name').value||'New Tournament',date:g('new-tour-date').value||'TBD',type:g('new-tour-type').value,status:g('new-tour-status').value});data.tournamentTrees.push(defaultTree());data.tournamentsRegistered=(data.tournaments||[]).filter(t=>t.status==='registered').length;render();};
 window.applyProgressEdits=()=>{if(!isTeacher)return toast('Teacher mode required.');data.rank=g('edit-rank').value||data.rank;data.rankPoints=Math.min(200,Math.max(0,parseInt(g('edit-rank-points').value||0)));render();};
 window.addSkill=()=>{if(!isTeacher)return toast('Teacher mode required.');const n=g('new-skill-name').value.trim();if(!n)return toast('Skill name required.');data.skills[n]=Math.min(100,Math.max(0,parseInt(g('new-skill-pct').value||0)));render();};
 
@@ -221,7 +274,7 @@ window.deleteAttendance=(i)=>{if(!isTeacher)return;data.attendance.splice(i,1);c
 window.editAttendance=(i)=>openRecordEditor('attendance',i);
 window.deleteLesson=(i)=>{if(!isTeacher)return;data.lessons.splice(i,1);render();};
 window.editLesson=(i)=>openRecordEditor('lesson',i);
-window.deleteTournament=(i)=>{if(!isTeacher)return;data.tournaments.splice(i,1);data.tournamentsRegistered=(data.tournaments||[]).filter(t=>t.status==='registered').length;render();};
+window.deleteTournament=(i)=>{if(!isTeacher)return;data.tournaments.splice(i,1);data.tournamentTrees.splice(i,1);data.tournamentsRegistered=(data.tournaments||[]).filter(t=>t.status==='registered').length;if(currentTournamentIndex>=data.tournaments.length)currentTournamentIndex=Math.max(0,data.tournaments.length-1);render();};
 window.editTournament=(i)=>openRecordEditor('tournament',i);
 window.deleteSkill=(i)=>{if(!isTeacher)return;const key=Object.keys(data.skills||{})[i];if(!key)return;delete data.skills[key];render();};
 window.editSkill=(i)=>openRecordEditor('skill',i);
@@ -232,6 +285,12 @@ function schemaFor(type,index){
   if(type==='lesson'){const l=data.lessons[index];return {title:'Edit Lesson',fields:[{k:'title',label:'Lesson Title',t:'text'},{k:'module',label:'Module',t:'text'},{k:'status',label:'Status',t:'select',opts:['done','progress','locked']},{k:'pct',label:'Progress %',t:'number'},{k:'score',label:'Score % (blank allowed)',t:'number'}],obj:{...l,score:l.score??''}};}
   if(type==='tournament'){const t=data.tournaments[index];return {title:'Edit Tournament',fields:[{k:'name',label:'Name',t:'text'},{k:'date',label:'Date',t:'text'},{k:'type',label:'Type',t:'select',opts:['obligatory','optional']},{k:'status',label:'Status',t:'select',opts:['registered','eligible']}],obj:{...t}};}
   if(type==='skill'){const key=Object.keys(data.skills||{})[index];return {title:'Edit Skill',fields:[{k:'name',label:'Skill Name',t:'text'},{k:'pct',label:'Skill %',t:'number'}],obj:{name:key,pct:data.skills[key]}};}
+  if(type==='tree-round'){const round=data.tournamentTrees[currentTournamentIndex]?.rounds?.[index];return {title:'Edit Branch Column',fields:[{k:'name',label:'Column Name',t:'text'}],obj:{name:round?.name||''}};}
+  if(type==='tree-branch'){
+    const [roundIndex,branchIndex]=String(index).split(':').map(Number);
+    const branch=data.tournamentTrees[currentTournamentIndex]?.rounds?.[roundIndex]?.branches?.[branchIndex];
+    return {title:'Edit Branch',fields:[{k:'name',label:'Branch Name',t:'text'},{k:'player1',label:'Player 1 Name',t:'text'},{k:'player2',label:'Player 2 Name',t:'text'},{k:'winner',label:'Winner',t:'text'}],obj:{name:branch?.name||'',player1:branch?.player1||'',player2:branch?.player2||'',winner:branch?.winner||''}};
+  }
   return {title:'Edit',fields:[],obj:{}};
 }
 
@@ -270,6 +329,15 @@ window.saveRecordEditor=()=>{
   if(type==='lesson'){data.lessons[index]={...data.lessons[index],title:draft.title||'',module:draft.module||'',status:['done','progress','locked'].includes(draft.status)?draft.status:'progress',pct:Math.max(0,Math.min(100,parseInt(draft.pct||0)||0)),score:draft.score===''?null:parseInt(draft.score)||null};}
   if(type==='tournament'){data.tournaments[index]={name:draft.name||'',date:draft.date||'',type:draft.type==='obligatory'?'obligatory':'optional',status:draft.status==='registered'?'registered':'eligible'};data.tournamentsRegistered=(data.tournaments||[]).filter(t=>t.status==='registered').length;}
   if(type==='skill'){const oldKey=Object.keys(data.skills||{})[index];if(oldKey)delete data.skills[oldKey];const nm=(draft.name||'New Skill').trim();data.skills[nm]=Math.max(0,Math.min(100,parseInt(draft.pct||0)||0));}
+  if(type==='tree-round'){
+    const round=data.tournamentTrees[currentTournamentIndex]?.rounds?.[index];
+    if(round) round.name=(draft.name||'Round').trim()||'Round';
+  }
+  if(type==='tree-branch'){
+    const [roundIndex,branchIndex]=String(index).split(':').map(Number);
+    const branch=data.tournamentTrees[currentTournamentIndex]?.rounds?.[roundIndex]?.branches?.[branchIndex];
+    if(branch) Object.assign(branch,{name:(draft.name||'Branch').trim()||'Branch',player1:(draft.player1||'TBD').trim()||'TBD',player2:(draft.player2||'TBD').trim()||'TBD',winner:(draft.winner||'').trim()});
+  }
   closeRecordEditor();
   render();
 };
@@ -288,7 +356,7 @@ document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=
 g('save-all').addEventListener('click',async()=>{if(!isTeacher)return toast('Teacher mode required.');collectEditable();await persist();toast('All teacher edits saved to Firestore.')});
 g('logout').addEventListener('click',async()=>{exitTeacher();await signOut(auth)});
 
-onAuthStateChanged(auth,async user=>{if(!user){currentUser=null;g('auth-screen').classList.remove('hidden');g('app-shell').classList.add('hidden');return}currentUser=user;const ref=doc(db,'students',user.uid);let snap=await getDoc(ref);if(!snap.exists()){await setDoc(ref,defaults(user.displayName||user.email.split('@')[0],user.email));snap=await getDoc(ref)}data=snap.data();if(!data.tournaments)data.tournaments=[];render();g('auth-screen').classList.add('hidden');g('app-shell').classList.remove('hidden')});
+onAuthStateChanged(auth,async user=>{if(!user){currentUser=null;g('auth-screen').classList.remove('hidden');g('app-shell').classList.add('hidden');return}currentUser=user;const ref=doc(db,'students',user.uid);let snap=await getDoc(ref);if(!snap.exists()){await setDoc(ref,defaults(user.displayName||user.email.split('@')[0],user.email));snap=await getDoc(ref)}data=snap.data();if(!data.tournaments)data.tournaments=[];ensureTournamentTrees();render();g('auth-screen').classList.add('hidden');g('app-shell').classList.remove('hidden')});
 </script>
 </body>
 </html>
