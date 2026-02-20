@@ -1,362 +1,1024 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>GoMaster Go Academy — Student Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
 <style>
-:root{--navy:#111c3f;--blue:#2a5298;--ink:#121a2e;--muted:#66718a;--line:#e3e9f7;--card:#fff;--bg:#eef2fb;--gold:#f0a500;--violet:#7c3aed;--danger:#e74c3c;--ok:#2ecc71;--sidebar:290px}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink)}
+:root{
+  --navy:#0a1628;--ink:#0d1a30;--muted:#5a6a88;--line:#d8e3f5;
+  --card:#fff;--bg:#f0f4fc;--gold:#f5a623;--violet:#6d28d9;--danger:#dc2626;
+  --ok:#059669;--accent:#3b82f6;
+  --sidebar-w:280px;--radius:16px;
+  --font:'Instrument Sans',sans-serif;--mono:'DM Mono',monospace;--display:'Syne',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--bg);color:var(--ink);min-height:100vh;overflow-x:hidden}
 .hidden{display:none!important}
-#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at 20% 20%,#2e4f96 0,#111c3f 58%)}
-.auth-box{width:100%;max-width:460px;background:#fff;border-radius:22px;padding:36px;box-shadow:0 18px 55px rgba(0,0,0,.24)}
-.logo{display:flex;align-items:center;gap:12px;margin-bottom:8px}.logo-badge{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:linear-gradient(135deg,var(--gold),#e08700);font-weight:700;color:#1d2333}
-.auth-title{font-family:'Playfair Display',serif;font-size:24px;color:var(--navy)}.auth-sub{font-size:13px;color:var(--muted);margin:6px 0 20px}
-label{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:700;color:var(--muted);margin:12px 0 6px}
-input,textarea,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 12px;font:inherit;background:#fff}
-textarea{min-height:78px;resize:vertical}
-input:focus,textarea:focus,select:focus{outline:none;border-color:#90a3d8;box-shadow:0 0 0 3px rgba(42,82,152,.12)}
-.btn{border:none;border-radius:999px;padding:10px 15px;font:inherit;font-weight:700;cursor:pointer}.btn-primary{background:linear-gradient(135deg,var(--blue),var(--navy));color:#fff;width:100%;margin-top:14px}
-.btn-violet{background:var(--violet);color:#fff}.btn-soft{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.35)}
-.auth-error{font-size:13px;color:var(--danger);margin-top:10px;min-height:18px}
-#app-shell{display:grid;grid-template-columns:var(--sidebar) 1fr;min-height:100vh}
-.sidebar{background:#0f1f46;color:#fff;padding:22px 18px;display:flex;flex-direction:column}
-.sidebar h2{font-family:'Playfair Display',serif;font-size:19px;line-height:1.25}.sidebar small{font-size:11px;opacity:.5;letter-spacing:.12em;text-transform:uppercase}
-.nav{margin:24px 0;display:flex;flex-direction:column;gap:6px}
-.nav-item{background:transparent;color:rgba(255,255,255,.72);border:none;border-radius:9px;padding:11px 12px;text-align:left;font:inherit;font-weight:600;cursor:pointer}
-.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.11);color:#fff}
-.admin-room{margin-top:auto;background:linear-gradient(140deg,rgba(124,58,237,.32),rgba(124,58,237,.18));border:1px solid rgba(196,181,253,.65);border-radius:14px;padding:14px}
-.admin-room h3{font-size:14px;margin-bottom:6px}.admin-room p{font-size:12px;opacity:.9;margin-bottom:10px;line-height:1.45}
-.admin-room .btn{width:100%;margin-top:8px}.main{display:flex;flex-direction:column}
-.topbar{height:68px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:9}
-.top-title h1{font-family:'Playfair Display',serif;font-size:22px;color:var(--navy)}.top-title p{font-size:12px;color:var(--muted)}.teacher-pill{background:var(--violet);color:#fff;border-radius:999px;font-size:11px;font-weight:700;padding:5px 10px}
-.page-content{padding:26px;display:flex;flex-direction:column;gap:18px}.page{display:none;flex-direction:column;gap:18px}.page.active{display:flex}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}.card-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}.card-head h3{font-size:15px;color:var(--navy)}.card-body{padding:16px}
-.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.big{font-family:'Playfair Display',serif;font-size:28px;color:var(--navy)}.sub{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-.welcome{background:linear-gradient(135deg,#172d63,#2a5298);color:#fff;padding:26px;border-radius:18px;display:flex;justify-content:space-between;align-items:center;gap:16px}.welcome h2{font-family:'Playfair Display',serif;font-size:24px}.welcome p{opacity:.85;max-width:620px;line-height:1.6;font-size:14px}.welcome .btn{background:var(--gold);color:#1d2333}
-.table{width:100%;border-collapse:collapse}.table th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding-bottom:10px;border-bottom:1px solid var(--line)}.table td{padding:10px 0;border-bottom:1px solid #f1f4fb;font-size:14px}
-.progress{height:8px;border-radius:999px;background:#e8eefc;overflow:hidden;margin-top:6px}.progress>span{display:block;height:100%;background:linear-gradient(90deg,var(--blue),#5079ca)}.progress.gold>span{background:linear-gradient(90deg,var(--gold),#e18800)}
-.pill{font-size:11px;font-weight:700;border-radius:999px;padding:4px 10px;display:inline-block}.pill.green{background:#e9f9ef;color:#1f9b54}.pill.red{background:#fff0f0;color:var(--danger)}.pill.blue{background:#e9effe;color:#2852a0}
-[data-edit]{white-space:pre-wrap;line-height:1.65;border-radius:8px}body.teacher-mode [data-edit]{outline:1.5px dashed #c4b5fd;background:#faf7ff;padding:6px}
-.t-panel{display:none;background:linear-gradient(135deg,#f5efff,#efe5ff);border:1px solid #cdbcfb;border-radius:14px;padding:14px}.t-panel.show{display:block}
-.t-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tiny{font-size:12px;color:var(--muted)}.btn-mini{padding:5px 10px;border-radius:8px;font-size:11px;font-weight:700}.btn-danger{background:#ffe8e8;color:#b63a3a;border:1px solid #ffc8c8}.btn-edit{background:#eceffd;color:#29407c;border:1px solid #d4def9}
-.action-row{display:flex;gap:8px;flex-wrap:wrap}
-.bracket{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.round-col{background:#f8faff;border:1px solid #dfe6f7;border-radius:12px;padding:10px}
-.round-col h4{font-size:13px;color:var(--navy);margin-bottom:8px}
-.branch{border:1px solid #dfe6f7;background:#fff;border-radius:10px;padding:10px;margin-bottom:8px}
-.branch-title{font-size:12px;color:var(--muted);margin-bottom:6px}
-.toast{position:fixed;right:16px;bottom:16px;background:#0f1f46;color:#fff;border-radius:10px;padding:10px 12px;opacity:0;transform:translateY(10px);transition:.2s;z-index:99}.toast.show{opacity:1;transform:translateY(0)}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:grid;place-items:center;z-index:100}.modal-card{width:min(390px,92vw);background:#fff;border-radius:16px;padding:22px}.modal-card h3{font-family:'Playfair Display',serif;color:var(--navy);margin-bottom:6px}.modal-card p{font-size:13px;color:var(--muted);margin-bottom:12px}.modal-actions{display:flex;gap:8px;margin-top:14px}.modal-actions .btn{flex:1}.editor-modal{width:min(760px,96vw);max-height:86vh;overflow:auto}.editor-wrap{display:grid;grid-template-columns:190px 1fr;gap:12px}.editor-tabs{display:flex;flex-direction:column;gap:8px}.e-tab{border:1px solid var(--line);background:#f8faff;border-radius:9px;padding:8px 10px;text-align:left;font-weight:600;cursor:pointer}.e-tab.active{background:#eceffd;border-color:#cddaf8}.editor-panel{border:1px solid var(--line);border-radius:10px;padding:12px;background:#fff}.editor-panel label{margin-top:0}.editor-title{font-size:13px;color:var(--muted);margin-bottom:8px}
-@media(max-width:980px){#app-shell{grid-template-columns:1fr}.kpi{grid-template-columns:1fr 1fr}.grid-2,.grid-3,.t-row{grid-template-columns:1fr}}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:999px}
+
+/* ── AUTH ── */
+#auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--navy);position:relative;overflow:hidden}
+#auth-screen::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 30% 40%,rgba(59,130,246,.18) 0,transparent 70%),radial-gradient(ellipse 60% 60% at 80% 70%,rgba(109,40,217,.14) 0,transparent 60%)}
+.auth-orbs{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.orb{position:absolute;border-radius:50%;filter:blur(60px);animation:orbFloat 8s ease-in-out infinite}
+.orb1{width:400px;height:400px;background:rgba(59,130,246,.12);top:-100px;left:-100px}
+.orb2{width:300px;height:300px;background:rgba(109,40,217,.1);bottom:-80px;right:-80px;animation-delay:-3s}
+.orb3{width:200px;height:200px;background:rgba(245,166,35,.08);top:50%;left:60%;animation-delay:-5s}
+@keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-20px) scale(1.05)}66%{transform:translate(-20px,15px) scale(.97)}}
+.auth-box{width:100%;max-width:420px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:36px;backdrop-filter:blur(24px);position:relative;z-index:1;animation:authSlide .5s cubic-bezier(.16,1,.3,1)}
+@keyframes authSlide{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.logo-badge{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--gold),#d97706);font-size:20px;box-shadow:0 8px 24px rgba(245,166,35,.35);margin-bottom:20px}
+.auth-title{font-family:var(--display);font-size:26px;font-weight:800;color:#fff;letter-spacing:-.02em}
+.auth-sub{font-size:13px;color:rgba(255,255,255,.45);margin:6px 0 28px;line-height:1.5}
+.auth-label{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;color:rgba(255,255,255,.4);margin:0 0 8px}
+.auth-input{width:100%;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:13px 16px;font:inherit;font-size:14px;background:rgba(255,255,255,.06);color:#fff;transition:border-color .2s,box-shadow .2s,background .2s;margin-bottom:16px}
+.auth-input::placeholder{color:rgba(255,255,255,.25)}
+.auth-input:focus{outline:none;border-color:rgba(59,130,246,.6);background:rgba(255,255,255,.09);box-shadow:0 0 0 4px rgba(59,130,246,.12)}
+.btn-login{width:100%;border:none;border-radius:12px;padding:14px;font:inherit;font-size:15px;font-weight:700;cursor:pointer;color:#fff;background:linear-gradient(135deg,#3b82f6,#1d4ed8);transition:transform .15s,box-shadow .15s;margin-top:4px;box-shadow:0 4px 20px rgba(59,130,246,.4)}
+.btn-login:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(59,130,246,.5)}
+.auth-error{font-size:12.5px;color:#f87171;margin-top:10px;min-height:18px}
+
+/* ── SIDEBAR ── */
+#app-shell{display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:var(--navy);color:#fff;display:flex;flex-direction:column;padding:24px 16px;position:fixed;top:0;left:0;bottom:0;z-index:50;border-right:1px solid rgba(255,255,255,.06);transition:transform .3s cubic-bezier(.16,1,.3,1);overflow-y:auto}
+.sidebar-logo{display:flex;align-items:center;gap:12px;margin-bottom:32px;padding:0 4px}
+.sidebar-badge{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:linear-gradient(135deg,var(--gold),#d97706);font-size:16px;flex-shrink:0}
+.sidebar-name{font-family:var(--display);font-size:16px;font-weight:700;line-height:1.2}
+.sidebar-name small{display:block;font-family:var(--font);font-size:10px;font-weight:400;opacity:.4;letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+.nav{display:flex;flex-direction:column;gap:3px;flex:1}
+.nav-item{display:flex;align-items:center;gap:10px;background:transparent;color:rgba(255,255,255,.55);border:none;border-radius:10px;padding:11px 12px;text-align:left;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;transition:background .2s,color .2s,transform .15s;position:relative;width:100%}
+.nav-item .nav-icon{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.nav-item .nav-badge{margin-left:auto;font-size:10px;font-weight:700;background:var(--accent);color:#fff;border-radius:999px;padding:2px 7px;min-width:20px;text-align:center}
+.nav-item:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9);transform:translateX(2px)}
+.nav-item.active{background:rgba(59,130,246,.18);color:#fff}
+.nav-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--accent);border-radius:999px}
+.sidebar-footer{margin-top:16px;display:flex;flex-direction:column;gap:8px}
+.admin-box{background:linear-gradient(135deg,rgba(109,40,217,.25),rgba(109,40,217,.12));border:1px solid rgba(167,139,250,.3);border-radius:14px;padding:14px}
+.admin-box h4{font-size:13px;font-weight:700;margin-bottom:6px}
+.admin-box p{font-size:11.5px;opacity:.75;line-height:1.5;margin-bottom:10px}
+.btn-sm{border:none;border-radius:8px;padding:8px 12px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;width:100%;margin-top:4px}
+.btn-violet{background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;box-shadow:0 4px 12px rgba(109,40,217,.35)}
+.btn-violet:hover{transform:translateY(-1px)}
+.btn-ghost{background:rgba(255,255,255,.08);color:rgba(255,255,255,.8);border:1px solid rgba(255,255,255,.15)}
+.btn-ghost:hover{background:rgba(255,255,255,.14)}
+.btn-danger-sm{background:rgba(220,38,38,.15);color:#f87171;border:1px solid rgba(220,38,38,.3)}
+
+/* ── LAYOUT ── */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.topbar{height:64px;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px;position:sticky;top:0;z-index:40}
+.top-title h1{font-family:var(--display);font-size:20px;font-weight:700;color:var(--navy);letter-spacing:-.02em}
+.top-title p{font-size:11.5px;color:var(--muted);margin-top:1px}
+.teacher-badge{background:linear-gradient(135deg,#7c3aed,#5b21b6);color:#fff;border-radius:999px;font-size:11px;font-weight:700;padding:5px 12px;letter-spacing:.05em;animation:badgePulse 2s ease-in-out infinite}
+@keyframes badgePulse{0%,100%{box-shadow:0 0 0 0 rgba(109,40,217,.4)}50%{box-shadow:0 0 0 6px rgba(109,40,217,0)}}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:8px;border-radius:8px;color:var(--navy);flex-direction:column;gap:5px}
+.hamburger span{display:block;width:22px;height:2px;background:currentColor;border-radius:2px;transition:.3s}
+.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:45}
+.overlay.show{display:block}
+.page-content{padding:24px;display:flex;flex-direction:column;gap:16px;flex:1}
+.page{display:none;flex-direction:column;gap:16px;animation:pageIn .35s cubic-bezier(.16,1,.3,1)}
+.page.active{display:flex}
+@keyframes pageIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:box-shadow .2s}
+.card:hover{box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.card-head h3{font-family:var(--display);font-size:15px;font-weight:700;color:var(--navy)}
+.card-body{padding:18px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+
+/* ── WELCOME ── */
+.welcome-banner{background:linear-gradient(135deg,#0f2055 0,#1a3a6e 50%,#0f2055 100%);color:#fff;padding:28px 32px;border-radius:20px;display:flex;justify-content:space-between;align-items:center;gap:20px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.08)}
+.welcome-banner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 100% at 80% 50%,rgba(59,130,246,.15) 0,transparent 60%)}
+.welcome-text{position:relative;z-index:1}
+.welcome-text h2{font-family:var(--display);font-size:24px;font-weight:800;letter-spacing:-.02em}
+.welcome-text p{opacity:.75;font-size:13.5px;line-height:1.65;margin-top:8px;max-width:560px}
+.welcome-cta{position:relative;z-index:1;flex-shrink:0}
+.btn-gold{border:none;border-radius:999px;padding:12px 22px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;color:#1a1a1a;background:linear-gradient(135deg,var(--gold),#e08700);transition:transform .15s,box-shadow .15s;box-shadow:0 4px 16px rgba(245,166,35,.4)}
+.btn-gold:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(245,166,35,.5)}
+
+/* ── KPI ── */
+.kpi-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s}
+.kpi-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.09)}
+.kpi-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--violet));transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.kpi-card:hover::after{transform:scaleX(1)}
+.kpi-big{font-family:var(--display);font-size:30px;font-weight:800;color:var(--navy);line-height:1}
+.kpi-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-top:6px}
+.kpi-icon{position:absolute;top:16px;right:16px;font-size:22px;opacity:.15}
+
+/* ── PROGRESS ── */
+.progress-bar{height:7px;border-radius:999px;background:#e8edf8;overflow:hidden}
+.progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--violet));transition:width .8s cubic-bezier(.16,1,.3,1)}
+.progress-fill.gold{background:linear-gradient(90deg,var(--gold),#d97706)}
+
+/* ── PILLS ── */
+.pill{font-size:11px;font-weight:700;border-radius:999px;padding:4px 10px;display:inline-flex;align-items:center;gap:4px}
+.pill::before{content:'';width:5px;height:5px;border-radius:50%;background:currentColor;display:block}
+.pill.green{background:#dcfce7;color:#16a34a}
+.pill.red{background:#fee2e2;color:#dc2626}
+.pill.blue{background:#dbeafe;color:#1d4ed8}
+.pill.amber{background:#fef3c7;color:#d97706}
+.pill.purple{background:#ede9fe;color:#7c3aed}
+
+/* ── TABLE ── */
+.table{width:100%;border-collapse:collapse}
+.table th{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);text-align:left;padding:0 8px 10px;border-bottom:1px solid var(--line)}
+.table td{padding:11px 8px;border-bottom:1px solid #f0f4fc;font-size:13.5px}
+.table tr:last-child td{border-bottom:none}
+.table tbody tr{transition:background .15s}
+.table tbody tr:hover{background:#f8faff}
+
+/* ── BUTTONS ── */
+.btn-primary{border:none;border-radius:10px;padding:10px 18px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;color:#fff;background:linear-gradient(135deg,var(--accent),#1d4ed8);transition:transform .15s,box-shadow .15s;box-shadow:0 4px 12px rgba(59,130,246,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(59,130,246,.4)}
+.btn-edit{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:8px;padding:5px 10px;font:inherit;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-edit:hover{background:#dbeafe}
+.btn-del{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;border-radius:8px;padding:5px 10px;font:inherit;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-del:hover{background:#fee2e2}
+.btn-add{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;border-radius:8px;padding:5px 10px;font:inherit;font-size:11.5px;font-weight:700;cursor:pointer;transition:all .15s}
+.btn-add:hover{background:#dcfce7}
+.action-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+
+/* ── TEACHER PANEL ── */
+.t-panel{display:none;background:linear-gradient(135deg,#faf5ff,#f3e8ff);border:1px solid #d8b4fe;border-radius:14px;padding:16px;animation:panelSlide .3s cubic-bezier(.16,1,.3,1)}
+.t-panel.show{display:block}
+@keyframes panelSlide{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+.t-panel-title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#7c3aed;margin-bottom:12px}
+.t-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+label.field-label{display:block;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:5px}
+input.field-input,textarea.field-input,select.field-input{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 12px;font:inherit;font-size:13px;background:#fff;transition:border-color .2s,box-shadow .2s}
+textarea.field-input{min-height:72px;resize:vertical}
+input.field-input:focus,textarea.field-input:focus,select.field-input:focus{outline:none;border-color:#93c5fd;box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+
+/* ── EDITABLE ── */
+[data-edit]{white-space:pre-wrap;line-height:1.7;border-radius:8px;transition:outline .2s;min-height:40px}
+body.teacher-mode [data-edit]{outline:2px dashed #d8b4fe;background:#faf5ff;padding:10px;cursor:text}
+body.teacher-mode [data-edit]:hover{outline-color:#a78bfa}
+body.teacher-mode [data-edit]:focus{outline-color:#7c3aed}
+
+/* ── BRACKET ── */
+.bracket-wrap{display:flex;gap:14px;overflow-x:auto;padding-bottom:8px}
+.round-col{min-width:220px;background:#f8faff;border:1px solid #dfe6f7;border-radius:14px;padding:14px}
+.round-col h4{font-family:var(--display);font-size:13px;color:var(--navy);margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.match-card{background:#fff;border:1px solid #dfe6f7;border-radius:10px;padding:12px;margin-bottom:8px;transition:box-shadow .2s}
+.match-card:hover{box-shadow:0 2px 12px rgba(0,0,0,.07)}
+.match-player{font-size:13px;padding:5px 0}
+.match-player.winner{font-weight:700;color:var(--ok)}
+.match-sep{font-size:10px;color:var(--muted);padding:2px 0;text-align:center}
+.match-label{font-size:11px;color:var(--muted);margin-bottom:6px;font-weight:600;letter-spacing:.04em}
+
+/* ── LESSON CARDS ── */
+.lesson-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden}
+.lesson-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.09)}
+.lesson-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--violet))}
+.lesson-tag{font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.lesson-title{font-weight:700;font-size:14.5px;color:var(--navy);line-height:1.35}
+
+/* ── CHAT ── */
+.chat-layout{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;height:calc(100vh - 112px);min-height:500px}
+.chat-header{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;background:#fff;flex-shrink:0}
+.chat-header h3{font-family:var(--display);font-size:15px;font-weight:700;color:var(--navy)}
+.chat-online{font-size:11px;color:var(--ok);display:flex;align-items:center;gap:5px}
+.chat-online::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--ok);display:block;animation:livePulse 2s ease-in-out infinite}
+@keyframes livePulse{0%,100%{box-shadow:0 0 0 0 rgba(5,150,105,.4)}50%{box-shadow:0 0 0 6px rgba(5,150,105,0)}}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;background:#f8faff}
+.chat-msg{display:flex;gap:10px;align-items:flex-end;animation:msgIn .25s cubic-bezier(.16,1,.3,1);position:relative}
+.chat-msg.own{flex-direction:row-reverse}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.chat-avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;background:linear-gradient(135deg,var(--accent),var(--violet))}
+.chat-msg.own .chat-avatar{background:linear-gradient(135deg,#1d4ed8,#7c3aed)}
+.chat-msg-wrap{max-width:72%;display:flex;flex-direction:column}
+.chat-msg.own .chat-msg-wrap{align-items:flex-end}
+.chat-sender-name{font-size:11px;font-weight:700;color:var(--navy);margin-bottom:4px;padding-left:4px}
+.chat-msg.own .chat-sender-name{display:none}
+.bubble-outer{position:relative}
+
+/* REPLY QUOTE INSIDE BUBBLE */
+/* For received messages (light bubble) */
+.reply-quote{border-radius:8px;padding:7px 10px;margin-bottom:8px;cursor:pointer;border-left:3px solid;transition:opacity .15s}
+.reply-quote:hover{opacity:.8}
+.reply-quote .rq-author{font-size:11px;font-weight:700;margin-bottom:3px}
+.reply-quote .rq-text{font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:240px}
+/* Light bubble (received): dark quote */
+.bubble-received .reply-quote{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.25)}
+.bubble-received .reply-quote .rq-author{color:#1d4ed8}
+.bubble-received .reply-quote .rq-text{color:#374151}
+/* Own bubble (blue gradient): white quote */
+.bubble-own .reply-quote{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.7)}
+.bubble-own .reply-quote .rq-author{color:#fff}
+.bubble-own .reply-quote .rq-text{color:rgba(255,255,255,.85)}
+
+.chat-bubble{padding:10px 14px;word-break:break-word;line-height:1.55}
+.bubble-received{background:#fff;border:1px solid var(--line);border-radius:18px 18px 18px 4px}
+.bubble-own{background:linear-gradient(135deg,#2563eb,#4f46e5);color:#fff;border-radius:18px 18px 4px 18px}
+.bubble-meta{display:flex;align-items:center;justify-content:flex-end;gap:5px;margin-top:5px}
+.bubble-time{font-size:10.5px}
+.bubble-received .bubble-time{opacity:.45;color:var(--ink)}
+.bubble-own .bubble-time{opacity:.65;color:#fff}
+.bubble-edited{font-size:10px}
+.bubble-received .bubble-edited{opacity:.45}
+.bubble-own .bubble-edited{opacity:.6;color:#fff}
+
+/* THREE DOT MENU BUTTON */
+.msg-menu-btn{background:none;border:none;cursor:pointer;font-size:12px;padding:2px 6px;border-radius:6px;color:inherit;opacity:0;transition:opacity .15s;line-height:1;letter-spacing:.05em;flex-shrink:0}
+.chat-msg:hover .msg-menu-btn{opacity:.55}
+.msg-menu-btn:hover{opacity:1!important}
+
+/* REACTIONS OVERLAY */
+.reactions-overlay{position:absolute;bottom:-14px;display:flex;flex-wrap:wrap;gap:3px;z-index:2}
+.chat-msg:not(.own) .reactions-overlay{left:8px}
+.chat-msg.own .reactions-overlay{right:8px}
+.reaction-chip{display:inline-flex;align-items:center;gap:3px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 7px;font-size:12px;cursor:pointer;transition:all .15s;user-select:none;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.reaction-chip:hover{background:#e0e9ff;border-color:#bfdbfe;transform:scale(1.08)}
+.reaction-chip.mine{background:#dbeafe;border-color:#93c5fd}
+.reaction-chip .r-count{font-size:11px;font-weight:700;color:var(--accent)}
+
+/* DROPDOWN */
+.msg-dropdown{position:fixed;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px;box-shadow:0 8px 28px rgba(0,0,0,.14);z-index:999;min-width:148px;animation:msgIn .15s cubic-bezier(.16,1,.3,1)}
+.msg-dropdown button{display:flex;align-items:center;gap:8px;width:100%;background:none;border:none;border-radius:8px;padding:8px 10px;font:inherit;font-size:13px;cursor:pointer;text-align:left;transition:background .12s;color:var(--ink)}
+.msg-dropdown button:hover{background:#f5f7fb}
+.msg-dropdown button.danger{color:var(--danger)}
+.msg-dropdown button.danger:hover{background:#fef2f2}
+.msg-dropdown .divider{height:1px;background:var(--line);margin:4px 0}
+
+/* EMOJI PICKER */
+.emoji-picker{position:fixed;background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;box-shadow:0 8px 28px rgba(0,0,0,.14);z-index:1000;display:flex;flex-wrap:wrap;gap:4px;max-width:220px;animation:msgIn .15s cubic-bezier(.16,1,.3,1)}
+.emoji-picker button{background:none;border:none;border-radius:8px;padding:5px;font-size:18px;cursor:pointer;transition:transform .1s,background .1s}
+.emoji-picker button:hover{background:#f0f4fc;transform:scale(1.2)}
+
+/* REPLY BANNER ABOVE INPUT */
+.reply-banner{display:flex;align-items:center;gap:10px;background:#eff6ff;border-top:1px solid #bfdbfe;border-left:3px solid var(--accent);padding:8px 14px;font-size:13px;color:var(--navy);flex-shrink:0}
+.reply-banner-content{flex:1;min-width:0}
+.reply-banner-author{font-size:11px;font-weight:700;color:var(--accent);margin-bottom:2px}
+.reply-banner-text{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reply-banner-cancel{background:none;border:none;cursor:pointer;font-size:20px;color:var(--muted);line-height:1;padding:0 4px;flex-shrink:0}
+
+/* EDIT TEXTAREA */
+.edit-textarea{width:100%;border:none;outline:none;background:transparent;font:inherit;font-size:13.5px;color:inherit;resize:none;line-height:1.55;min-height:24px;max-height:200px;overflow-y:auto;display:block}
+
+/* SWIPE */
+.chat-msg{touch-action:pan-y;transition:transform .2s cubic-bezier(.16,1,.3,1)}
+.chat-msg.swiping{transition:none}
+.swipe-indicator{position:absolute;top:50%;transform:translateY(-50%);font-size:18px;opacity:0;transition:opacity .15s;pointer-events:none;z-index:3}
+.chat-msg.own .swipe-indicator{left:-34px}
+.chat-msg:not(.own) .swipe-indicator{right:-34px}
+
+/* CHAT INPUT */
+.chat-input-area{padding:12px 16px;border-top:1px solid var(--line);background:#fff;display:flex;gap:10px;align-items:flex-end;flex-shrink:0}
+.chat-input{flex:1;border:1px solid var(--line);border-radius:12px;padding:10px 14px;font:inherit;font-size:13.5px;resize:none;min-height:42px;max-height:120px;overflow-y:auto;transition:border-color .2s,box-shadow .2s;background:#f8faff}
+.chat-input:focus{outline:none;border-color:#93c5fd;background:#fff;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.chat-send{width:42px;height:42px;border:none;border-radius:11px;cursor:pointer;background:linear-gradient(135deg,var(--accent),#1d4ed8);color:#fff;font-size:16px;display:grid;place-items:center;flex-shrink:0;transition:transform .15s,box-shadow .15s;box-shadow:0 4px 12px rgba(59,130,246,.3)}
+.chat-send:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(59,130,246,.4)}
+
+/* ── MODAL ── */
+.modal{position:fixed;inset:0;background:rgba(10,22,40,.6);backdrop-filter:blur(6px);display:grid;place-items:center;z-index:200;padding:20px;animation:fadeIn .2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal.hidden{display:none}
+.modal-card{width:min(440px,100%);background:#fff;border-radius:20px;padding:24px;animation:modalSlide .3s cubic-bezier(.16,1,.3,1);box-shadow:0 20px 60px rgba(0,0,0,.2)}
+@keyframes modalSlide{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+.modal-card h3{font-family:var(--display);font-size:18px;font-weight:700;color:var(--navy);margin-bottom:6px}
+.modal-card p{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+.modal-actions{display:flex;gap:10px;margin-top:16px}
+.modal-actions .btn-primary{flex:1}
+.btn-cancel{flex:1;border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;font-size:13px;font-weight:700;cursor:pointer;background:none;color:var(--muted);transition:background .15s}
+.btn-cancel:hover{background:#f5f7fb}
+.modal-error{font-size:12.5px;color:#dc2626;margin-top:8px;min-height:18px}
+.editor-modal{width:min(740px,100%);max-height:88vh;overflow-y:auto}
+.editor-wrap{display:grid;grid-template-columns:180px 1fr;gap:14px;margin-top:4px}
+.editor-tabs{display:flex;flex-direction:column;gap:6px}
+.e-tab{border:1px solid var(--line);background:#f8faff;border-radius:9px;padding:9px 12px;text-align:left;font:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;color:var(--muted)}
+.e-tab:hover{background:#eff6ff;color:var(--accent)}
+.e-tab.active{background:#dbeafe;border-color:#bfdbfe;color:#1d4ed8}
+.editor-panel{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fafbff}
+
+/* ── TOAST ── */
+.toast{position:fixed;right:20px;bottom:20px;background:#0f1f46;color:#fff;border-radius:12px;padding:12px 18px;font-size:13.5px;font-weight:500;opacity:0;transform:translateY(16px) scale(.95);transition:all .25s cubic-bezier(.16,1,.3,1);z-index:300;border:1px solid rgba(255,255,255,.1);max-width:320px;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.toast.show{opacity:1;transform:translateY(0) scale(1)}
+.toast.success{background:linear-gradient(135deg,#065f46,#047857)}
+.toast.error-t{background:linear-gradient(135deg,#7f1d1d,#991b1b)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  .sidebar{transform:translateX(-100%)}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .hamburger{display:flex}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .editor-wrap{grid-template-columns:1fr}
+  .editor-tabs{flex-direction:row;flex-wrap:wrap}
+  .e-tab{flex:1;min-width:100px}
+  .welcome-banner{flex-direction:column;align-items:flex-start}
+  .topbar{padding:0 16px}
+  .page-content{padding:14px}
+  .t-grid{grid-template-columns:1fr}
+  .bracket-wrap{flex-direction:column}
+  .round-col{min-width:unset}
+  .chat-layout{height:calc(100vh - 100px)}
+  .chat-msg-wrap{max-width:82%}
+}
+@media(max-width:600px){
+  .welcome-banner{padding:20px}
+  .welcome-text h2{font-size:20px}
+  .auth-box{padding:24px 20px}
+  .kpi-big{font-size:24px}
+}
 </style>
 </head>
 <body>
+
+<!-- AUTH -->
 <div id="auth-screen">
+  <div class="auth-orbs"><div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div></div>
   <div class="auth-box">
-    <div class="logo"><div class="logo-badge">⬡</div><div><div class="auth-title">GoMaster Academy</div><div style="font-size:12px;color:var(--muted)">Student Portal</div></div></div>
-    <p class="auth-sub">Sign in only. Enter the credentials your teacher provided.</p>
-    <label>Email</label><input id="login-email" type="email" autocomplete="username" />
-    <label>Password</label><input id="login-password" type="password" autocomplete="current-password" minlength="6" onkeydown="if(event.key==='Enter')doLogin()" />
-    <button id="login-btn" class="btn btn-primary" onclick="doLogin()" disabled>Sign In</button>
+    <div class="logo-badge">⬡</div>
+    <div class="auth-title">GoMaster Academy</div>
+    <p class="auth-sub">Sign in with the credentials your teacher provided.</p>
+    <label class="auth-label">Email</label>
+    <input class="auth-input" id="login-email" type="email" autocomplete="username" placeholder="student@gomaster.com"/>
+    <label class="auth-label">Password</label>
+    <input class="auth-input" id="login-password" type="password" autocomplete="current-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button class="btn-login" onclick="doLogin()">Sign In →</button>
     <div class="auth-error" id="auth-error"></div>
   </div>
 </div>
 
+<!-- APP -->
 <div id="app-shell" class="hidden">
-  <aside class="sidebar">
-    <h2>GoMaster<br/>Go Academy</h2><small>Student Portal</small>
-    <div class="nav" id="nav">
-      <button class="nav-item active" data-page="dashboard">⊞ Dashboard</button>
-      <button class="nav-item" data-page="schedule">📅 Schedule</button>
-      <button class="nav-item" data-page="lessons">📖 Lessons</button>
-      <button class="nav-item" data-page="progress">📈 Progress</button>
-      <button class="nav-item" data-page="tournaments">🏆 Tournaments</button>
-      <button class="nav-item" data-page="announcements">📢 Announcements</button>
-      <button class="nav-item" data-page="profile">👤 Profile</button>
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-badge">⬡</div>
+      <div class="sidebar-name">GoMaster<small>Academy Portal</small></div>
     </div>
-    <div class="admin-room">
-      <h3>🛡️ Admin Room</h3>
-      <p>Teacher mode unlocks full edit access to student data, progress, rank, and all records.</p>
-      <button id="enter-teacher" class="btn btn-violet">Enter as Teacher</button>
-      <button id="signout-teacher" class="btn btn-soft hidden">Sign out as Teacher</button>
-      <button id="save-all" class="btn btn-soft hidden">Save Teacher Edits</button>
+    <nav class="nav">
+      <button class="nav-item active" data-page="dashboard"><span class="nav-icon">⊞</span>Dashboard</button>
+      <button class="nav-item" data-page="schedule"><span class="nav-icon">📅</span>Schedule</button>
+      <button class="nav-item" data-page="lessons"><span class="nav-icon">📖</span>Lessons</button>
+      <button class="nav-item" data-page="progress"><span class="nav-icon">📈</span>Progress</button>
+      <button class="nav-item" data-page="tournaments"><span class="nav-icon">🏆</span>Tournaments</button>
+      <button class="nav-item" data-page="announcements"><span class="nav-icon">📢</span>Announcements</button>
+      <button class="nav-item" data-page="chat"><span class="nav-icon">💬</span>Chat<span class="nav-badge hidden" id="chat-badge">0</span></button>
+      <button class="nav-item" data-page="profile"><span class="nav-icon">👤</span>Profile</button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="admin-box">
+        <h4>🛡️ Admin Room</h4>
+        <p>Teacher mode enables full edit access to all student records and public content.</p>
+        <button id="enter-teacher" class="btn-sm btn-violet">Enter as Teacher</button>
+        <button id="signout-teacher" class="btn-sm btn-ghost hidden">Exit Teacher Mode</button>
+        <button id="save-all" class="btn-sm btn-ghost hidden">💾 Save All Edits</button>
+      </div>
+      <button id="logout" class="btn-sm btn-danger-sm">Sign Out</button>
     </div>
-    <button id="logout" class="btn btn-soft" style="margin-top:10px">Sign Out</button>
   </aside>
 
   <main class="main">
-    <header class="topbar"><div class="top-title"><h1 id="page-title">Dashboard</h1><p id="page-sub">Your academy overview</p></div><span id="teacher-pill" class="teacher-pill hidden">TEACHER MODE</span></header>
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="hamburger" id="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+        <div class="top-title"><h1 id="page-title">Dashboard</h1><p id="page-sub">Your academy overview</p></div>
+      </div>
+      <span id="teacher-pill" class="teacher-badge hidden">TEACHER MODE</span>
+    </header>
+
     <div class="page-content">
+
+      <!-- DASHBOARD -->
       <section class="page active" id="page-dashboard">
-        <div class="welcome"><div><h2 id="welcome-text">Welcome back!</h2><p data-edit="coachNarrative"></p></div><button class="btn" onclick="openPage('schedule')">View Schedule</button></div>
-        <div class="kpi">
-          <div class="card"><div class="card-body"><div class="big" data-bind="sessionsAttended"></div><div class="sub">Sessions Attended</div></div></div>
-          <div class="card"><div class="card-body"><div class="big" data-bind="tournamentsRegistered"></div><div class="sub">Tournaments Registered</div></div></div>
-          <div class="card"><div class="card-body"><div class="big"><span data-bind="attendanceRate"></span>%</div><div class="sub">Attendance Rate</div></div></div>
-          <div class="card"><div class="card-body"><div class="big" data-bind="rank"></div><div class="sub">Current Rank</div></div></div>
+        <div class="welcome-banner">
+          <div class="welcome-text">
+            <h2 id="welcome-text">Welcome back!</h2>
+            <p data-edit="coachNarrative" data-scope="private"></p>
+          </div>
+          <div class="welcome-cta"><button class="btn-gold" onclick="openPage('schedule')">View Schedule →</button></div>
+        </div>
+        <div class="grid-4">
+          <div class="kpi-card"><div class="kpi-icon">📚</div><div class="kpi-big" data-bind="sessionsAttended">—</div><div class="kpi-label">Sessions Attended</div></div>
+          <div class="kpi-card"><div class="kpi-icon">🏆</div><div class="kpi-big" data-bind="tournamentsRegistered">—</div><div class="kpi-label">Tournaments Registered</div></div>
+          <div class="kpi-card"><div class="kpi-icon">✅</div><div class="kpi-big"><span data-bind="attendanceRate">—</span>%</div><div class="kpi-label">Attendance Rate</div></div>
+          <div class="kpi-card"><div class="kpi-icon">⬡</div><div class="kpi-big" data-bind="rank">—</div><div class="kpi-label">Current Rank</div></div>
         </div>
         <div class="grid-2">
-          <div class="card"><div class="card-head"><h3>Skill Focus This Week</h3></div><div class="card-body" id="skills-dash"></div></div>
-          <div class="card"><div class="card-head"><h3>Upcoming Events</h3></div><div class="card-body" data-edit="eventsDetail"></div></div>
+          <div class="card"><div class="card-head"><h3>Skill Focus</h3></div><div class="card-body" id="skills-dash"></div></div>
+          <div class="card"><div class="card-head"><h3>Upcoming Events</h3></div><div class="card-body" data-edit="eventsDetail" data-scope="public"></div></div>
         </div>
       </section>
 
+      <!-- SCHEDULE -->
       <section class="page" id="page-schedule">
-        <div class="grid-2"><div class="card"><div class="card-head"><h3>School Sessions</h3></div><div class="card-body" data-edit="scheduleDetail"></div></div><div class="card"><div class="card-head"><h3>Club Hours</h3></div><div class="card-body" data-edit="clubHoursDetail"></div></div></div>
-        <div class="card"><div class="card-head"><h3>Attendance Record</h3></div><div class="card-body"><table class="table"><thead><tr><th>Date</th><th>Day</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody id="attendance-tbody"></tbody></table></div></div>
-        <div class="t-panel" id="attendance-panel"><div class="tiny">Add New Attendance Record</div><div class="t-row"><input id="new-att-date" placeholder="Mar 05, 2026"/><input id="new-att-day" placeholder="Thursday"/><input id="new-att-type" placeholder="School Session"/><select id="new-att-status"><option value="present">present</option><option value="absent">absent</option></select></div><div class="action-row" style="margin-top:8px"><button class="btn btn-violet" onclick="addAttendanceRecord()">+ New Attendance</button></div></div>
+        <div class="grid-2">
+          <div class="card"><div class="card-head"><h3>School Sessions</h3></div><div class="card-body" data-edit="scheduleDetail" data-scope="public"></div></div>
+          <div class="card"><div class="card-head"><h3>Club Hours</h3></div><div class="card-body" data-edit="clubHoursDetail" data-scope="public"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Attendance Record</h3><span id="att-summary" style="font-size:12px;color:var(--muted)"></span></div>
+          <div class="card-body"><table class="table"><thead><tr><th>Date</th><th>Day</th><th>Type</th><th>Status</th><th id="att-actions-head"></th></tr></thead><tbody id="attendance-tbody"></tbody></table></div>
+        </div>
+        <div class="t-panel" id="attendance-panel">
+          <div class="t-panel-title">Add Attendance Record (private)</div>
+          <div class="t-grid">
+            <div><label class="field-label">Date</label><input class="field-input" id="new-att-date" placeholder="Mar 05, 2026"/></div>
+            <div><label class="field-label">Day</label><input class="field-input" id="new-att-day" placeholder="Thursday"/></div>
+            <div><label class="field-label">Type</label><input class="field-input" id="new-att-type" placeholder="School Session"/></div>
+            <div><label class="field-label">Status</label><select class="field-input" id="new-att-status"><option value="present">present</option><option value="absent">absent</option></select></div>
+          </div>
+          <div class="action-row" style="margin-top:12px"><button class="btn-add" onclick="addAttendanceRecord()">+ Add Attendance</button></div>
+        </div>
       </section>
 
+      <!-- LESSONS -->
       <section class="page" id="page-lessons">
         <div class="grid-3" id="lesson-cards"></div>
-        <div class="card"><div class="card-head"><h3>Curriculum Breakdown</h3></div><div class="card-body"><table class="table"><thead><tr><th>Lesson</th><th>Module</th><th>Status</th><th>Score</th><th>Progress</th><th>Actions</th></tr></thead><tbody id="curriculum-tbody"></tbody></table></div></div>
-        <div class="t-panel" id="lesson-panel"><div class="tiny">Add New Lesson Item</div><div class="t-row"><input id="new-lesson-title" placeholder="Lesson title"/><input id="new-lesson-module" placeholder="Module"/><select id="new-lesson-status"><option>progress</option><option>done</option><option>locked</option></select><input id="new-lesson-pct" type="number" min="0" max="100" placeholder="Progress %"/></div><div class="action-row" style="margin-top:8px"><button class="btn btn-violet" onclick="addLesson()">+ New Lesson</button></div></div>
-      </section>
-
-      <section class="page" id="page-progress">
-        <div class="grid-2"><div class="card"><div class="card-head"><h3>Rank Journey</h3></div><div class="card-body"><div class="big" data-bind="rank"></div><div class="tiny"><span data-bind="rankPoints"></span> ranking points</div><div class="progress gold"><span id="rank-progress"></span></div></div></div><div class="card"><div class="card-head"><h3>Coach Performance Notes</h3></div><div class="card-body" data-edit="performanceNotes"></div></div></div>
-        <div class="card"><div class="card-head"><h3>Skill Breakdown</h3></div><div class="card-body" id="skills-progress"></div></div>
-        <div class="t-panel" id="progress-panel">
-          <div class="tiny">Edit Rank / Overall Progress / Skills</div>
-          <div class="t-row">
-            <input id="edit-rank" placeholder="Rank e.g. 21 kyu"/>
-            <input id="edit-rank-points" type="number" min="0" max="200" placeholder="Rank points"/>
-            <input id="new-skill-name" placeholder="New skill name"/>
-            <input id="new-skill-pct" type="number" min="0" max="100" placeholder="Skill %"/>
+        <div class="card">
+          <div class="card-head"><h3>Curriculum Breakdown</h3></div>
+          <div class="card-body"><table class="table"><thead><tr><th>Lesson</th><th>Module</th><th>Status</th><th>Score</th><th>Progress</th><th id="lesson-actions-head"></th></tr></thead><tbody id="curriculum-tbody"></tbody></table></div>
+        </div>
+        <div class="t-panel" id="lesson-panel">
+          <div class="t-panel-title">Add Lesson — name &amp; module are public (all students)</div>
+          <div class="t-grid">
+            <div><label class="field-label">Lesson Title</label><input class="field-input" id="new-lesson-title" placeholder="Lesson title"/></div>
+            <div><label class="field-label">Module</label><input class="field-input" id="new-lesson-module" placeholder="Module name"/></div>
           </div>
-          <div class="action-row" style="margin-top:8px"><button class="btn btn-violet" onclick="applyProgressEdits()">Apply Progress + Rank</button><button class="btn btn-violet" onclick="addSkill()">+ New Skill</button></div>
+          <div class="action-row" style="margin-top:12px"><button class="btn-add" onclick="addLesson()">+ Add Lesson</button></div>
         </div>
       </section>
 
-      <section class="page" id="page-tournaments">
-        <div class="card"><div class="card-head"><h3>Tournaments</h3></div><div class="card-body"><table class="table"><thead><tr><th>Name</th><th>Date</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody id="tournament-tbody"></tbody></table></div></div>
-        <div class="card"><div class="card-head"><h3>Tournament Rules & Policy</h3></div><div class="card-body" data-edit="policyDetail"></div></div>
-        <div class="t-panel" id="tournament-panel"><div class="tiny">Add New Tournament</div><div class="t-row"><input id="new-tour-name" placeholder="Tournament name"/><input id="new-tour-date" placeholder="Apr 07, 2026"/><select id="new-tour-type"><option>obligatory</option><option>optional</option></select><select id="new-tour-status"><option>registered</option><option>eligible</option></select></div><div class="action-row" style="margin-top:8px"><button class="btn btn-violet" onclick="addTournament()">+ New Tournament</button></div></div>
+      <!-- PROGRESS -->
+      <section class="page" id="page-progress">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-head"><h3>Rank Journey</h3></div>
+            <div class="card-body">
+              <div class="kpi-big" data-bind="rank">—</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:4px"><span data-bind="rankPoints">0</span> ranking points</div>
+              <div class="progress-bar" style="margin-top:12px"><div class="progress-fill gold" id="rank-progress"></div></div>
+            </div>
+          </div>
+          <div class="card"><div class="card-head"><h3>Coach Performance Notes</h3></div><div class="card-body" data-edit="performanceNotes" data-scope="private"></div></div>
+        </div>
+        <div class="card"><div class="card-head"><h3>Skill Breakdown</h3></div><div class="card-body" id="skills-progress"></div></div>
+        <div class="t-panel" id="progress-panel">
+          <div class="t-panel-title">Edit Rank &amp; Skills (private per student)</div>
+          <div class="t-grid">
+            <div><label class="field-label">Rank</label><input class="field-input" id="edit-rank" placeholder="e.g. 21 kyu"/></div>
+            <div><label class="field-label">Rank Points (0–200)</label><input class="field-input" type="number" id="edit-rank-points" min="0" max="200" placeholder="90"/></div>
+            <div><label class="field-label">New Skill Name</label><input class="field-input" id="new-skill-name" placeholder="Skill name"/></div>
+            <div><label class="field-label">Skill %</label><input class="field-input" type="number" id="new-skill-pct" min="0" max="100" placeholder="50"/></div>
+          </div>
+          <div class="action-row" style="margin-top:12px">
+            <button class="btn-edit" onclick="applyProgressEdits()">Apply Rank</button>
+            <button class="btn-add" onclick="addSkill()">+ Add Skill</button>
+          </div>
+        </div>
       </section>
 
+      <!-- TOURNAMENTS -->
+      <section class="page" id="page-tournaments">
+        <div class="card">
+          <div class="card-head"><h3>Tournaments</h3></div>
+          <div class="card-body"><table class="table"><thead><tr><th>Name</th><th>Date</th><th>Type</th><th>Your Status</th><th>Actions</th></tr></thead><tbody id="tournament-tbody"></tbody></table></div>
+        </div>
+        <div class="card"><div class="card-head"><h3>Rules &amp; Policy</h3></div><div class="card-body" data-edit="policyDetail" data-scope="public"></div></div>
+        <div class="t-panel" id="tournament-panel">
+          <div class="t-panel-title">Add Tournament (public — all students)</div>
+          <div class="t-grid">
+            <div><label class="field-label">Name</label><input class="field-input" id="new-tour-name" placeholder="Tournament name"/></div>
+            <div><label class="field-label">Date</label><input class="field-input" id="new-tour-date" placeholder="Apr 07, 2026"/></div>
+            <div><label class="field-label">Type</label><select class="field-input" id="new-tour-type"><option>obligatory</option><option>optional</option></select></div>
+          </div>
+          <div class="action-row" style="margin-top:12px"><button class="btn-add" onclick="addTournament()">+ Add Tournament</button></div>
+        </div>
+      </section>
+
+      <!-- TOURNAMENT TREE -->
       <section class="page" id="page-tournament-tree">
         <div class="card">
           <div class="card-head">
-            <h3 id="tree-title">Tournament Tree</h3>
+            <h3 id="tree-title">Tournament Bracket</h3>
             <div class="action-row">
-              <button class="btn-mini btn-edit" onclick="openPage('tournaments')">Back to Tournaments</button>
-              <button id="add-round-btn" class="btn-mini btn-edit hidden" onclick="addTreeRound()">+ Add Branch Column</button>
+              <button class="btn-edit" onclick="openPage('tournaments')">← Back</button>
+              <button id="add-round-btn" class="btn-add hidden" onclick="addTreeRound()">+ Add Column</button>
             </div>
           </div>
           <div class="card-body">
-            <p class="tiny" id="tree-sub">Students can view the bracket. Teacher mode can edit names and branches.</p>
-            <div id="tournament-tree" class="bracket"></div>
+            <p style="font-size:12px;color:var(--muted);margin-bottom:14px" id="tree-sub"></p>
+            <div id="tournament-tree" class="bracket-wrap"></div>
           </div>
         </div>
       </section>
 
+      <!-- ANNOUNCEMENTS -->
       <section class="page" id="page-announcements">
-        <div class="card"><div class="card-head"><h3>Announcements</h3></div><div class="card-body" data-edit="announcementsDetail"></div></div>
+        <div class="card"><div class="card-head"><h3>📢 Announcements</h3></div><div class="card-body" data-edit="announcementsDetail" data-scope="public"></div></div>
       </section>
 
+      <!-- CHAT -->
+      <section class="page" id="page-chat">
+        <div class="chat-layout">
+          <div class="chat-header">
+            <h3>💬 Academy Chat</h3>
+            <span class="chat-online">Live</span>
+          </div>
+          <div class="chat-messages" id="chat-messages">
+            <div style="text-align:center;padding:40px 20px;color:var(--muted);font-size:13px">Loading messages…</div>
+          </div>
+          <div id="reply-banner-slot"></div>
+          <div class="chat-input-area" id="chat-input-area">
+            <textarea class="chat-input" id="chat-input" placeholder="Message… (Enter to send)" rows="1"
+              onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage()}"></textarea>
+            <button class="chat-send" onclick="sendChatMessage()">➤</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- PROFILE -->
       <section class="page" id="page-profile">
         <div class="grid-2">
-          <div class="card"><div class="card-head"><h3>Personal Information</h3></div><div class="card-body"><label>Full Name</label><input id="profile-name"/><label>Email</label><input id="profile-email" disabled style="background:#f7faff"/><label>Date of Birth</label><input id="profile-dob" type="date"/><label>Enrollment Date</label><input id="profile-enrolled" disabled style="background:#f7faff"/><button class="btn btn-primary" onclick="saveProfile()">Save Profile</button></div></div>
-          <div class="card"><div class="card-head"><h3>Long-Term Development Plan</h3></div><div class="card-body" data-edit="developmentPlan"></div></div>
+          <div class="card">
+            <div class="card-head"><h3>Personal Information</h3></div>
+            <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+              <div><label class="field-label">Full Name</label><input class="field-input" id="profile-name"/></div>
+              <div><label class="field-label">Email</label><input class="field-input" id="profile-email" disabled style="opacity:.6"/></div>
+              <div><label class="field-label">Date of Birth</label><input class="field-input" id="profile-dob" type="date"/></div>
+              <div><label class="field-label">Enrollment Date</label><input class="field-input" id="profile-enrolled" disabled style="opacity:.6"/></div>
+              <button class="btn-primary" onclick="saveProfile()">Save Profile</button>
+            </div>
+          </div>
+          <div class="card"><div class="card-head"><h3>Development Plan</h3></div><div class="card-body" data-edit="developmentPlan" data-scope="private"></div></div>
         </div>
       </section>
     </div>
   </main>
 </div>
 
-<div class="modal hidden" id="teacher-modal"><div class="modal-card"><h3>Teacher Access</h3><p>Enter password to unlock editing for every student section.</p><label>Teacher Password</label><input type="password" id="teacher-pw" onkeydown="if(event.key==='Enter')verifyTeacher()"/><div class="auth-error" id="teacher-error"></div><div class="modal-actions"><button class="btn" onclick="closeTeacherModal()">Cancel</button><button class="btn btn-violet" onclick="verifyTeacher()">Unlock</button></div></div></div>
+<!-- TEACHER MODAL -->
+<div class="modal hidden" id="teacher-modal">
+  <div class="modal-card">
+    <h3>🛡️ Teacher Access</h3>
+    <p>Enter the teacher password to unlock full edit access.</p>
+    <label class="field-label">Teacher Password</label>
+    <input class="field-input" type="password" id="teacher-pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')verifyTeacher()"/>
+    <div class="modal-error" id="teacher-error"></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeTeacherModal()">Cancel</button>
+      <button class="btn-primary" onclick="verifyTeacher()">Unlock →</button>
+    </div>
+  </div>
+</div>
 
+<!-- RECORD EDITOR MODAL -->
 <div class="modal hidden" id="record-editor-modal">
   <div class="modal-card editor-modal">
     <h3 id="editor-head">Edit Record</h3>
-    <p id="editor-sub">Update each field in its tab and save.</p>
+    <p id="editor-sub" style="margin-bottom:0">Use tabs to edit each field.</p>
     <div class="editor-wrap">
       <div class="editor-tabs" id="editor-tabs"></div>
       <div class="editor-panel">
-        <div class="editor-title" id="editor-field-title">Field</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:10px" id="editor-field-title"></div>
         <div id="editor-field-input"></div>
       </div>
     </div>
     <div class="modal-actions">
-      <button class="btn" onclick="closeRecordEditor()">Cancel</button>
-      <button class="btn btn-violet" onclick="saveRecordEditor()">Save Changes</button>
+      <button class="btn-cancel" onclick="closeRecordEditor()">Cancel</button>
+      <button class="btn-primary" onclick="saveRecordEditor()">Save Changes</button>
     </div>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import{getAuth,signInWithEmailAndPassword,signOut,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,updateDoc,serverTimestamp,onSnapshot,collection,addDoc,query,orderBy,limit,deleteDoc}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig={apiKey:"AIzaSyBasETP9cwlo7kdeL-uqYv8lMoojo-t194",authDomain:"gomaster-academy-portal.firebaseapp.com",projectId:"gomaster-academy-portal",storageBucket:"gomaster-academy-portal.firebasestorage.app",messagingSenderId:"724167694045",appId:"1:724167694045:web:f7ea537e0db3d8d5f1ed34",measurementId:"G-QX4G48NZDZ"};
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
-const TEACHER_PASSWORD='teacher67go';
-let isTeacher=false,currentUser=null,data=null,currentTournamentIndex=0;
-const meta={dashboard:['Dashboard','Your academy overview'],schedule:['Schedule','Sessions and attendance details'],lessons:['Lessons','Curriculum and module tracking'],progress:['Progress','Skill and ranking development'],tournaments:['Tournaments','Competition planning and policy'],'tournament-tree':['Tournament Tree','Bracket view and branch management'],announcements:['Announcements','Academy updates'],profile:['Profile','Personal information and plan']};
+const FB={apiKey:"AIzaSyBasETP9cwlo7kdeL-uqYv8lMoojo-t194",authDomain:"gomaster-academy-portal.firebaseapp.com",projectId:"gomaster-academy-portal",storageBucket:"gomaster-academy-portal.firebasestorage.app",messagingSenderId:"724167694045",appId:"1:724167694045:web:f7ea537e0db3d8d5f1ed34"};
+const TEACHER_PW='teacher67go';
+const app=initializeApp(FB),auth=getAuth(app),db=getFirestore(app);
+const PUBLIC_DOC=doc(db,'config','public');
+const EMOJI_SET=['👍','❤️','😂','😮','😢','🔥','👏','🎉','🤔','💯'];
+const PAGE_META={dashboard:['Dashboard','Your academy overview'],schedule:['Schedule','Sessions & attendance'],lessons:['Lessons','Curriculum & modules'],progress:['Progress','Skills & ranking'],tournaments:['Tournaments','Competitions'],'tournament-tree':['Tournament Tree','Bracket view'],announcements:['Announcements','Academy updates'],chat:['Chat','Message your classmates'],profile:['Profile','Personal information']};
 
-function defaultTree(){
-  return {rounds:[
-    {name:'Quarterfinals',branches:[{name:'Branch A',player1:'Student A',player2:'Student B',winner:'Student A'},{name:'Branch B',player1:'Student C',player2:'Student D',winner:''}]},
-    {name:'Semifinal',branches:[{name:'Branch C',player1:'Winner A',player2:'Winner B',winner:''}]},
-    {name:'Final',branches:[{name:'Championship',player1:'Winner C',player2:'TBD',winner:''}]}
-  ]};
+let isTeacher=false,currentUser=null,privateData=null,publicData=null;
+let currentTournamentIndex=0,chatUnsub=null,pubUnsub=null,unreadChat=0,replyingTo=null,activeDropdown=null;
+
+const g=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const escAttr=s=>esc(s).replace(/"/g,'&quot;');
+const toHtml=s=>esc(s).replace(/\n/g,'<br>');
+let _tt;
+function toast(msg,type=''){const t=g('toast');t.textContent=msg;t.className=`toast ${type} show`;clearTimeout(_tt);_tt=setTimeout(()=>t.className='toast',2800)}
+
+/* ── LOGIN ── */
+window.doLogin=async()=>{
+  const email=g('login-email').value.trim(),pass=g('login-password').value;
+  g('auth-error').textContent='';
+  if(!email||!pass){g('auth-error').textContent='Please enter email and password.';return;}
+  try{await signInWithEmailAndPassword(auth,email,pass);}
+  catch{g('auth-error').textContent='Invalid email or password.';}
+};
+
+/* ── SIDEBAR ── */
+window.toggleSidebar=()=>{const s=g('sidebar'),h=g('hamburger'),o=g('overlay');const op=s.classList.toggle('open');h.classList.toggle('open',op);o.classList.toggle('show',op)};
+window.closeSidebar=()=>{g('sidebar').classList.remove('open');g('hamburger').classList.remove('open');g('overlay').classList.remove('show')};
+
+/* ── NAV ── */
+window.openPage=(key)=>{
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===key));
+  document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===`page-${key}`));
+  const m=PAGE_META[key]||[key,''];g('page-title').textContent=m[0];g('page-sub').textContent=m[1];
+  if(key==='chat'){unreadChat=0;updateChatBadge();}
+  closeSidebar();
+};
+document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>openPage(n.dataset.page)));
+
+/* ── DEFAULTS ── */
+function defaultTree(){return{rounds:[{name:'Quarterfinals',branches:[{name:'Branch A',player1:'Student A',player2:'Student B',winner:'Student A'},{name:'Branch B',player1:'Student C',player2:'Student D',winner:''}]},{name:'Semifinal',branches:[{name:'Branch C',player1:'Winner A',player2:'Winner B',winner:''}]},{name:'Final',branches:[{name:'Championship',player1:'Winner C',player2:'TBD',winner:''}]}]};}
+function publicDefaults(){return{scheduleDetail:'Friday 3:00 PM Technical Lesson\nSaturday 3:00 PM Review & Problems\nSunday 3:00 PM Match Play & Analysis',clubHoursDetail:'Mon–Fri 9:00 AM–7:00 PM\nSat 9:00 AM–7:00 PM\nSun 9:00 AM–7:00 PM',eventsDetail:'• GMAT (Obligatory): Mar 20, 2026\n• Young Masters (Optional): Apr 1, 2026\n• Internal Ladder Review: Every second Sunday.',policyDetail:'Obligatory events require 7-day absence notice. Optional events depend on age/rank eligibility.',announcementsDetail:'1) Weekend club hours extended until 8:00 PM.\n2) New tsumego pack uploaded.\n3) Friendly ladder every Thursday.',tournaments:[{name:'GMAT',date:'Mar 20, 2026',type:'obligatory'},{name:'Young Masters',date:'Apr 01, 2026',type:'optional'}],tournamentTrees:[defaultTree(),defaultTree()],lessons:[{title:'Introduction to Direction of Play',module:'Strategy I'},{title:'Basic Tesuji Patterns',module:'Tactics'},{title:'Endgame Counting Basics',module:'Endgame'}],updatedAt:serverTimestamp()};}
+function privateDefaults(name,email){return{name,email,dob:'',enrolledAt:new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),rank:'25 kyu',rankPoints:90,sessionsAttended:0,tournamentsRegistered:0,attendanceRate:0,skills:{},attendance:[],lessonStatus:{},tournamentStatus:{},coachNarrative:'Your journey at GoMaster Academy begins here. Your teacher will update this section as you progress.',performanceNotes:'No notes yet. Your teacher will add performance notes after your first sessions.',developmentPlan:'Your development plan will be set by your teacher.',createdAt:serverTimestamp(),updatedAt:serverTimestamp()};}
+
+/* ── PUBLIC DOC ── */
+async function ensurePublicDoc(){
+  const snap=await getDoc(PUBLIC_DOC);
+  if(!snap.exists())await setDoc(PUBLIC_DOC,publicDefaults());
+  publicData=snap.exists()?snap.data():publicDefaults();
+  if(!publicData.lessons)publicData.lessons=[];
+  if(!publicData.tournaments)publicData.tournaments=[];
+  if(!publicData.tournamentTrees)publicData.tournamentTrees=[];
+  while(publicData.tournamentTrees.length<publicData.tournaments.length)publicData.tournamentTrees.push(defaultTree());
+}
+function subscribePub(){
+  if(pubUnsub)pubUnsub();
+  pubUnsub=onSnapshot(PUBLIC_DOC,snap=>{
+    if(!snap.exists())return;
+    publicData=snap.data();
+    if(!publicData.lessons)publicData.lessons=[];
+    if(!publicData.tournaments)publicData.tournaments=[];
+    if(!publicData.tournamentTrees)publicData.tournamentTrees=[];
+    while(publicData.tournamentTrees.length<publicData.tournaments.length)publicData.tournamentTrees.push(defaultTree());
+    render();
+  });
 }
 
-function defaults(name,email){return{name,email,dob:'',enrolledAt:new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),rank:'25 kyu',rankPoints:90,sessionsAttended:17,tournamentsRegistered:2,attendanceRate:89,
-skills:{"Opening Theory":62,"Life & Death":48,"Fuseki Concepts":58,"Tesuji":40,"Endgame":34,"Reading Depth":44},attendance:[{date:'Mar 02, 2026',day:'Sunday',type:'School Session',status:'present'},{date:'Mar 01, 2026',day:'Saturday',type:'School Session',status:'present'},{date:'Feb 28, 2026',day:'Friday',type:'School Session',status:'absent'}],
-lessons:[{title:'Introduction to Direction of Play',module:'Strategy I',status:'done',score:88,pct:100},{title:'Basic Tesuji Patterns',module:'Tactics',status:'progress',score:null,pct:65},{title:'Endgame Counting Basics',module:'Endgame',status:'progress',score:null,pct:44}],
-tournaments:[{name:'GMAT',date:'Mar 20, 2026',type:'obligatory',status:'registered'},{name:'Young Masters',date:'Apr 01, 2026',type:'optional',status:'eligible'}],
-tournamentTrees:[defaultTree(),defaultTree()],coachNarrative:'You’re building excellent consistency. Tactical reading improved in the last three weeks, and your shape discipline is cleaner during fights.',eventsDetail:'• GMAT (Obligatory): Mar 20, 2026\n• Young Masters (Optional): Apr 1, 2026\n• Internal Ladder Review: Every second Sunday.',
-scheduleDetail:'Friday 3:00 PM Technical Lesson\nSaturday 3:00 PM Review & Problems\nSunday 3:00 PM Match Play & Analysis',clubHoursDetail:'Mon–Fri 9:00 AM–7:00 PM\nSat 9:00 AM–7:00 PM\nSun 9:00 AM–7:00 PM',performanceNotes:'Reading accuracy improved from 52% to 68%. Endgame counting needs structure: 10 yose problems daily.',policyDetail:'Obligatory events require 7-day absence notice. Optional events depend on age/rank eligibility.',announcementsDetail:'1) Weekend club hours extended until 8:00 PM.\n2) New tsumego pack uploaded.\n3) Friendly ladder every Thursday.',developmentPlan:'Phase 1 (4 weeks): improve tactical reading to 55%.\nPhase 2 (6 weeks): stabilize opening choices.\nPhase 3 (8 weeks): close games with better yose.',createdAt:serverTimestamp(),updatedAt:serverTimestamp()};}
-
-const g=id=>document.getElementById(id); let to;
-const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); const escAttr=s=>esc(s).replace(/"/g,'&quot;'); const toHtml=s=>esc(s).replace(/\n/g,'<br>');
-function toast(msg){const t=g('toast');t.textContent=msg;t.classList.add('show');clearTimeout(to);to=setTimeout(()=>t.classList.remove('show'),2800)}
-
-function ensureTournamentTrees(){
-  if(!Array.isArray(data.tournamentTrees)) data.tournamentTrees=[];
-  while(data.tournamentTrees.length<(data.tournaments||[]).length) data.tournamentTrees.push(defaultTree());
+/* ── PERSIST ── */
+async function persistPrivate(fields){
+  if(!currentUser||!privateData)return;
+  const r=doc(db,'students',currentUser.uid);
+  const u={updatedAt:serverTimestamp()};
+  if(fields)fields.forEach(f=>{if(privateData[f]!==undefined)u[f]=privateData[f];});
+  else Object.assign(u,privateData);
+  await updateDoc(r,u);
+}
+async function persistPublic(){
+  const safe={...publicData};delete safe.updatedAt;
+  await setDoc(PUBLIC_DOC,{...safe,updatedAt:serverTimestamp()},{merge:true});
+}
+function collectEditable(){
+  document.querySelectorAll('[data-edit]').forEach(el=>{
+    const key=el.dataset.edit,scope=el.dataset.scope,val=el.innerText;
+    if(scope==='public'){if(publicData)publicData[key]=val;}else{if(privateData)privateData[key]=val;}
+  });
 }
 
-function refreshLoginBtn(){const email=g('login-email').value.trim();const pass=g('login-password').value;g('login-btn').disabled=!(email&&pass&&pass.length>=6)}
-g('login-email').addEventListener('input',refreshLoginBtn);g('login-password').addEventListener('input',refreshLoginBtn);
-
-function renderTournamentTree(){
-  ensureTournamentTrees();
-  const tournament=(data?.tournaments||[])[currentTournamentIndex];
-  const tree=(data?.tournamentTrees||[])[currentTournamentIndex]||defaultTree();
-  g('tree-title').textContent=tournament?`${tournament.name} — Tournament Tree`:'Tournament Tree';
-  g('add-round-btn').classList.toggle('hidden',!isTeacher);
-  g('tournament-tree').innerHTML=(tree.rounds||[]).map((round,roundIndex)=>`<div class="round-col"><h4>${esc(round.name)} ${isTeacher?`<button class="btn-mini btn-edit" onclick="editRoundName(${roundIndex})">Edit</button>`:''}</h4>${(round.branches||[]).map((branch,branchIndex)=>`<div class="branch"><div class="branch-title">${esc(branch.name)}</div><div>${esc(branch.player1)} vs ${esc(branch.player2)}</div><div class="tiny">Winner: ${esc(branch.winner||'TBD')}</div>${isTeacher?`<div class="action-row" style="margin-top:6px"><button class="btn-mini btn-edit" onclick="editBranch(${roundIndex},${branchIndex})">Edit</button><button class="btn-mini btn-danger" onclick="deleteBranch(${roundIndex},${branchIndex})">Delete</button></div>`:''}</div>`).join('')}${isTeacher?`<button class="btn-mini btn-edit" onclick="addBranch(${roundIndex})">+ Add Branch</button>`:''}</div>`).join('');
-}
-
+/* ── RENDER ── */
 function render(){
-  ensureTournamentTrees();
-  document.querySelectorAll('[data-bind]').forEach(el=>el.textContent=data?.[el.dataset.bind]??'—');
-  document.querySelectorAll('[data-edit]').forEach(el=>{el.innerHTML=toHtml(data?.[el.dataset.edit]||'');el.contentEditable=String(isTeacher)});
-  g('profile-name').value=data?.name||'';g('profile-email').value=data?.email||'';g('profile-dob').value=data?.dob||'';g('profile-enrolled').value=data?.enrolledAt||'';
-  g('welcome-text').textContent=`Welcome back, ${(data?.name||'Student').split(' ')[0]}!`; g('rank-progress').style.width=Math.min((data?.rankPoints||0)/2,100)+'%';
-  const skills=Object.entries(data?.skills||{});
-  g('skills-dash').innerHTML=skills.map(([k,v])=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;font-size:13px"><span>${esc(k)}</span><strong>${v}%</strong></div><div class="progress"><span style="width:${v}%"></span></div></div>`).join('');
-  g('skills-progress').innerHTML=skills.map(([k,v],i)=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px;align-items:center"><span>${esc(k)}</span><div style="display:flex;align-items:center;gap:8px"><strong>${v}%</strong>${isTeacher?`<button class=\"btn-mini btn-edit\" onclick=\"editSkill(${i})\">Edit</button><button class=\"btn-mini btn-danger\" onclick=\"deleteSkill(${i})\">Delete</button>`:''}</div></div><div class="progress ${i%2?'gold':''}"><span style="width:${v}%"></span></div></div>`).join('');
-  g('attendance-tbody').innerHTML=(data?.attendance||[]).map((a,i)=>`<tr><td>${esc(a.date)}</td><td>${esc(a.day)}</td><td>${esc(a.type)}</td><td><span class="pill ${a.status==='present'?'green':'red'}">${a.status}</span></td><td>${isTeacher?`<button class=\"btn-mini btn-edit\" onclick=\"editAttendance(${i})\">Edit</button> <button class=\"btn-mini btn-danger\" onclick=\"deleteAttendance(${i})\">Delete</button>`:''}</td></tr>`).join('');
-  const sm={done:'<span class="pill green">done</span>',progress:'<span class="pill blue">progress</span>',locked:'<span class="pill red">locked</span>'};
-  g('lesson-cards').innerHTML=(data?.lessons||[]).map(l=>`<div class="card"><div class="card-body"><div class="tiny" style="text-transform:uppercase">${esc(l.module)}</div><div style="font-weight:700;margin-top:6px">${esc(l.title)}</div><div class="progress" style="margin-top:10px"><span style="width:${l.pct||0}%"></span></div><div class="tiny">${l.pct||0}% complete</div></div></div>`).join('');
-  g('curriculum-tbody').innerHTML=(data?.lessons||[]).map((l,i)=>`<tr><td>${esc(l.title)}</td><td>${esc(l.module)}</td><td>${sm[l.status]||esc(l.status)}</td><td>${l.score==null?'—':l.score+'%'}</td><td>${l.pct||0}%</td><td>${isTeacher?`<button class=\"btn-mini btn-edit\" onclick=\"editLesson(${i})\">Edit</button> <button class=\"btn-mini btn-danger\" onclick=\"deleteLesson(${i})\">Delete</button>`:''}</td></tr>`).join('');
-  g('tournament-tbody').innerHTML=(data?.tournaments||[]).map((t,i)=>`<tr><td>${esc(t.name)}</td><td>${esc(t.date)}</td><td><span class="pill ${t.type==='obligatory'?'red':'blue'}">${esc(t.type)}</span></td><td><span class="pill ${t.status==='registered'?'green':'blue'}">${esc(t.status)}</span></td><td><button class=\"btn-mini btn-edit\" onclick=\"viewTournament(${i})\">View Tournament</button>${isTeacher?` <button class=\"btn-mini btn-edit\" onclick=\"editTournament(${i})\">Edit</button> <button class=\"btn-mini btn-danger\" onclick=\"deleteTournament(${i})\">Delete</button>`:''}</td></tr>`).join('');
-  g('edit-rank').value=data?.rank||''; g('edit-rank-points').value=data?.rankPoints??0;
-  renderTournamentTree();
+  if(!privateData||!publicData)return;
+  document.querySelectorAll('[data-bind]').forEach(el=>{el.textContent=privateData[el.dataset.bind]??publicData[el.dataset.bind]??'—';});
+  document.querySelectorAll('[data-edit]').forEach(el=>{
+    const key=el.dataset.edit,scope=el.dataset.scope;
+    el.innerHTML=toHtml((scope==='public'?publicData[key]:privateData[key])||'');
+    el.contentEditable=String(isTeacher);
+  });
+  g('welcome-text').textContent=`Welcome back, ${(privateData.name||'Student').split(' ')[0]}!`;
+  g('profile-name').value=privateData.name||'';g('profile-email').value=privateData.email||'';
+  g('profile-dob').value=privateData.dob||'';g('profile-enrolled').value=privateData.enrolledAt||'';
+  g('edit-rank').value=privateData.rank||'';g('edit-rank-points').value=privateData.rankPoints??0;
+  g('rank-progress').style.width=Math.min((privateData.rankPoints||0)/2,100)+'%';
+
+  const skills=Object.entries(privateData.skills||{});
+  g('skills-dash').innerHTML=skills.length?skills.map(([k,v])=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px"><span>${esc(k)}</span><strong style="font-family:var(--mono)">${v}%</strong></div><div class="progress-bar"><div class="progress-fill" style="width:${v}%"></div></div></div>`).join(''):'<p style="color:var(--muted);font-size:13px">No skills added yet.</p>';
+  g('skills-progress').innerHTML=skills.length?skills.map(([k,v],i)=>`<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px"><span style="font-size:13.5px;font-weight:600;color:var(--navy)">${esc(k)}</span><div style="display:flex;align-items:center;gap:8px"><span style="font-family:var(--mono);font-size:13px;color:var(--accent)">${v}%</span>${isTeacher?`<button class="btn-edit" onclick="editSkill(${i})">Edit</button><button class="btn-del" onclick="deleteSkill(${i})">✕</button>`:''}</div></div><div class="progress-bar"><div class="progress-fill${i%2?' gold':''}" style="width:${v}%"></div></div></div>`).join(''):'<p style="color:var(--muted);font-size:13px">No skills yet.</p>';
+
+  const att=privateData.attendance||[];const present=att.filter(x=>x.status==='present').length;
+  g('att-summary').textContent=att.length?`${present}/${att.length} present`:'';
+  g('att-actions-head').textContent=isTeacher?'Actions':'';
+  g('attendance-tbody').innerHTML=att.map((a,i)=>`<tr><td>${esc(a.date)}</td><td>${esc(a.day)}</td><td>${esc(a.type)}</td><td><span class="pill ${a.status==='present'?'green':'red'}">${a.status}</span></td><td>${isTeacher?`<div class="action-row"><button class="btn-edit" onclick="editAttendance(${i})">Edit</button><button class="btn-del" onclick="deleteAttendance(${i})">✕</button></div>`:''}</td></tr>`).join('')||'<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No records yet.</td></tr>';
+
+  const lessons=publicData.lessons||[];const ls=privateData.lessonStatus||{};
+  const sp={done:'<span class="pill green">done</span>',progress:'<span class="pill blue">in progress</span>',locked:'<span class="pill red">locked</span>'};
+  g('lesson-cards').innerHTML=lessons.map(l=>{const s=ls[l.title]||{status:'locked',pct:0};return`<div class="lesson-card"><div class="lesson-tag">${esc(l.module)}</div><div class="lesson-title">${esc(l.title)}</div>${sp[s.status]||sp.locked}<div class="progress-bar" style="margin-top:8px"><div class="progress-fill" style="width:${s.pct||0}%"></div></div><div style="font-size:12px;color:var(--muted)">${s.pct||0}% complete</div></div>`;}).join('');
+  g('lesson-actions-head').textContent=isTeacher?'Actions':'';
+  g('curriculum-tbody').innerHTML=lessons.map((l,i)=>{const s=ls[l.title]||{status:'locked',score:null,pct:0};return`<tr><td style="font-weight:600">${esc(l.title)}</td><td>${esc(l.module)}</td><td>${sp[s.status]||sp.locked}</td><td style="font-family:var(--mono)">${s.score==null?'—':s.score+'%'}</td><td style="font-family:var(--mono)">${s.pct||0}%</td><td>${isTeacher?`<div class="action-row"><button class="btn-edit" onclick="editLesson(${i})">Edit</button><button class="btn-del" onclick="deleteLesson(${i})">✕</button></div>`:''}</td></tr>`;}).join('')||'<tr><td colspan="6" style="color:var(--muted);text-align:center;padding:20px">No lessons yet.</td></tr>';
+
+  const tours=publicData.tournaments||[];const ts=privateData.tournamentStatus||{};
+  g('tournament-tbody').innerHTML=tours.map((t,i)=>{const s=(ts[t.name]||{status:'eligible'}).status;return`<tr><td style="font-weight:600">${esc(t.name)}</td><td>${esc(t.date)}</td><td><span class="pill ${t.type==='obligatory'?'red':'blue'}">${esc(t.type)}</span></td><td><span class="pill ${s==='registered'?'green':'amber'}">${s}</span></td><td><div class="action-row"><button class="btn-edit" onclick="viewTournament(${i})">View Bracket</button>${isTeacher?`<button class="btn-edit" onclick="editTournamentStatus(${i})">Edit Status</button><button class="btn-edit" onclick="editTournamentPublic(${i})">Edit Info</button><button class="btn-del" onclick="deleteTournament(${i})">✕</button>`:''}</div></td></tr>`;}).join('')||'<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">No tournaments yet.</td></tr>';
+
+  renderTree();
 }
 
-function collectEditable(){document.querySelectorAll('[data-edit]').forEach(el=>{data[el.dataset.edit]=el.innerText})}
-async function persist(){data.updatedAt=serverTimestamp();await updateDoc(doc(db,'students',currentUser.uid),data)}
+/* ── TREE ── */
+function renderTree(){
+  if(!publicData)return;
+  const t=publicData.tournaments?.[currentTournamentIndex];
+  const tree=publicData.tournamentTrees?.[currentTournamentIndex]||defaultTree();
+  g('tree-title').textContent=t?`${t.name} — Bracket`:'Tournament Bracket';
+  g('tree-sub').textContent=`Viewing: ${t?t.name:'Unknown'}${isTeacher?' — Teacher can edit matches':''}`;
+  g('add-round-btn').classList.toggle('hidden',!isTeacher);
+  g('tournament-tree').innerHTML=(tree.rounds||[]).map((round,ri)=>`<div class="round-col"><h4>${esc(round.name)}${isTeacher?` <button class="btn-edit" style="font-size:10px;padding:3px 7px" onclick="editRoundName(${ri})">Edit</button>`:''}</h4>${(round.branches||[]).map((b,bi)=>`<div class="match-card"><div class="match-label">${esc(b.name)}</div><div class="match-player${b.winner===b.player1&&b.winner?' winner':''}">${esc(b.player1)}</div><div class="match-sep">vs</div><div class="match-player${b.winner===b.player2&&b.winner?' winner':''}">${esc(b.player2)}</div>${b.winner?`<div style="font-size:11px;color:var(--ok);font-weight:700;margin-top:6px">🏆 ${esc(b.winner)}</div>`:'<div style="font-size:11px;color:var(--muted);margin-top:6px">In progress</div>'}${isTeacher?`<div class="action-row" style="margin-top:8px"><button class="btn-edit" onclick="editBranch(${ri},${bi})">Edit</button><button class="btn-del" onclick="deleteBranch(${ri},${bi})">✕</button></div>`:''}</div>`).join('')}${isTeacher?`<button class="btn-add" style="width:100%;margin-top:4px" onclick="addBranch(${ri})">+ Add Match</button>`:''}</div>`).join('');
+}
 
-window.viewTournament=(i)=>{currentTournamentIndex=i;openPage('tournament-tree');renderTournamentTree();};
-window.editRoundName=(roundIndex)=>openRecordEditor('tree-round',roundIndex);
-window.editBranch=(roundIndex,branchIndex)=>openRecordEditor('tree-branch',`${roundIndex}:${branchIndex}`);
-window.addBranch=(roundIndex)=>{if(!isTeacher)return toast('Teacher mode required.');data.tournamentTrees[currentTournamentIndex].rounds[roundIndex].branches.push({name:'New Branch',player1:'TBD',player2:'TBD',winner:''});renderTournamentTree();};
-window.deleteBranch=(roundIndex,branchIndex)=>{if(!isTeacher)return toast('Teacher mode required.');const branches=data.tournamentTrees[currentTournamentIndex].rounds[roundIndex].branches;if(!branches?.length)return;branches.splice(branchIndex,1);renderTournamentTree();};
-window.addTreeRound=()=>{if(!isTeacher)return toast('Teacher mode required.');data.tournamentTrees[currentTournamentIndex].rounds.push({name:`Round ${data.tournamentTrees[currentTournamentIndex].rounds.length+1}`,branches:[{name:'New Branch',player1:'TBD',player2:'TBD',winner:''}]});renderTournamentTree();};
+window.viewTournament=(i)=>{currentTournamentIndex=i;openPage('tournament-tree');renderTree();};
+window.editRoundName=(ri)=>openRecordEditor('tree-round',ri);
+window.editBranch=(ri,bi)=>openRecordEditor('tree-branch',`${ri}:${bi}`);
+window.addBranch=(ri)=>{if(!isTeacher)return;publicData.tournamentTrees[currentTournamentIndex].rounds[ri].branches.push({name:'New Match',player1:'TBD',player2:'TBD',winner:''});renderTree();};
+window.deleteBranch=(ri,bi)=>{if(!isTeacher)return;publicData.tournamentTrees[currentTournamentIndex].rounds[ri].branches.splice(bi,1);renderTree();};
+window.addTreeRound=()=>{if(!isTeacher)return;publicData.tournamentTrees[currentTournamentIndex].rounds.push({name:`Round ${publicData.tournamentTrees[currentTournamentIndex].rounds.length+1}`,branches:[{name:'New Match',player1:'TBD',player2:'TBD',winner:''}]});renderTree();};
 
-window.addAttendanceRecord=()=>{if(!isTeacher) return toast('Teacher mode required.');const row={date:g('new-att-date').value||'Unknown',day:g('new-att-day').value||'—',type:g('new-att-type').value||'Session',status:g('new-att-status').value};data.attendance.unshift(row);const p=data.attendance.filter(x=>x.status==='present').length;data.sessionsAttended=p;data.attendanceRate=Math.round(p/data.attendance.length*100);render();};
-window.addLesson=()=>{if(!isTeacher)return toast('Teacher mode required.');data.lessons.push({title:g('new-lesson-title').value||'New Lesson',module:g('new-lesson-module').value||'General',status:g('new-lesson-status').value,pct:Math.min(100,Math.max(0,parseInt(g('new-lesson-pct').value||0))),score:null});render();};
-window.addTournament=()=>{if(!isTeacher)return toast('Teacher mode required.');data.tournaments.push({name:g('new-tour-name').value||'New Tournament',date:g('new-tour-date').value||'TBD',type:g('new-tour-type').value,status:g('new-tour-status').value});data.tournamentTrees.push(defaultTree());data.tournamentsRegistered=(data.tournaments||[]).filter(t=>t.status==='registered').length;render();};
-window.applyProgressEdits=()=>{if(!isTeacher)return toast('Teacher mode required.');data.rank=g('edit-rank').value||data.rank;data.rankPoints=Math.min(200,Math.max(0,parseInt(g('edit-rank-points').value||0)));render();};
-window.addSkill=()=>{if(!isTeacher)return toast('Teacher mode required.');const n=g('new-skill-name').value.trim();if(!n)return toast('Skill name required.');data.skills[n]=Math.min(100,Math.max(0,parseInt(g('new-skill-pct').value||0)));render();};
-
-window.deleteAttendance=(i)=>{if(!isTeacher)return;data.attendance.splice(i,1);const p=data.attendance.filter(x=>x.status==='present').length;data.sessionsAttended=p;data.attendanceRate=data.attendance.length?Math.round(p/data.attendance.length*100):0;render();};
+/* ── ATTENDANCE ── */
+window.addAttendanceRecord=()=>{if(!isTeacher)return toast('Teacher mode required.','error-t');privateData.attendance.unshift({date:g('new-att-date').value||'Unknown',day:g('new-att-day').value||'—',type:g('new-att-type').value||'Session',status:g('new-att-status').value});recalcAtt();render();};
+function recalcAtt(){const a=privateData.attendance||[];const p=a.filter(x=>x.status==='present').length;privateData.sessionsAttended=p;privateData.attendanceRate=a.length?Math.round(p/a.length*100):0;}
+window.deleteAttendance=(i)=>{if(!isTeacher)return;privateData.attendance.splice(i,1);recalcAtt();render();};
 window.editAttendance=(i)=>openRecordEditor('attendance',i);
-window.deleteLesson=(i)=>{if(!isTeacher)return;data.lessons.splice(i,1);render();};
+
+/* ── LESSONS ── */
+window.addLesson=()=>{if(!isTeacher)return toast('Teacher mode required.','error-t');const title=g('new-lesson-title').value.trim();if(!title)return toast('Title required.','error-t');publicData.lessons.push({title,module:g('new-lesson-module').value.trim()||'General'});g('new-lesson-title').value='';g('new-lesson-module').value='';render();toast('Lesson added.','success');};
+window.deleteLesson=(i)=>{if(!isTeacher)return;publicData.lessons.splice(i,1);render();toast('Removed.','success');};
 window.editLesson=(i)=>openRecordEditor('lesson',i);
-window.deleteTournament=(i)=>{if(!isTeacher)return;data.tournaments.splice(i,1);data.tournamentTrees.splice(i,1);data.tournamentsRegistered=(data.tournaments||[]).filter(t=>t.status==='registered').length;if(currentTournamentIndex>=data.tournaments.length)currentTournamentIndex=Math.max(0,data.tournaments.length-1);render();};
-window.editTournament=(i)=>openRecordEditor('tournament',i);
-window.deleteSkill=(i)=>{if(!isTeacher)return;const key=Object.keys(data.skills||{})[i];if(!key)return;delete data.skills[key];render();};
+
+/* ── PROGRESS ── */
+window.applyProgressEdits=()=>{if(!isTeacher)return toast('Teacher mode required.','error-t');privateData.rank=g('edit-rank').value||privateData.rank;privateData.rankPoints=Math.min(200,Math.max(0,parseInt(g('edit-rank-points').value)||0));render();toast('Rank updated.','success');};
+window.addSkill=()=>{if(!isTeacher)return toast('Teacher mode required.','error-t');const n=g('new-skill-name').value.trim();if(!n)return toast('Name required.','error-t');if(!privateData.skills)privateData.skills={};privateData.skills[n]=Math.min(100,Math.max(0,parseInt(g('new-skill-pct').value)||0));g('new-skill-name').value='';g('new-skill-pct').value='';render();toast('Skill added.','success');};
+window.deleteSkill=(i)=>{if(!isTeacher)return;const k=Object.keys(privateData.skills||{})[i];if(k)delete privateData.skills[k];render();};
 window.editSkill=(i)=>openRecordEditor('skill',i);
 
-let editorState={type:null,index:null,fields:[],draft:{},tab:0};
+/* ── TOURNAMENTS ── */
+window.addTournament=()=>{if(!isTeacher)return toast('Teacher mode required.','error-t');const name=g('new-tour-name').value.trim();if(!name)return toast('Name required.','error-t');publicData.tournaments.push({name,date:g('new-tour-date').value||'TBD',type:g('new-tour-type').value});publicData.tournamentTrees.push(defaultTree());g('new-tour-name').value='';g('new-tour-date').value='';render();toast('Tournament added.','success');};
+window.deleteTournament=(i)=>{if(!isTeacher)return;publicData.tournaments.splice(i,1);publicData.tournamentTrees.splice(i,1);if(currentTournamentIndex>=publicData.tournaments.length)currentTournamentIndex=Math.max(0,publicData.tournaments.length-1);render();};
+window.editTournamentPublic=(i)=>openRecordEditor('tournament-public',i);
+window.editTournamentStatus=(i)=>openRecordEditor('tournament-status',i);
+
+/* ── RECORD EDITOR ── */
+let edState={type:null,index:null,fields:[],draft:{},tab:0};
 function schemaFor(type,index){
-  if(type==='attendance'){const a=data.attendance[index];return {title:'Edit Attendance Record',fields:[{k:'date',label:'Date',t:'text'},{k:'day',label:'Day',t:'text'},{k:'type',label:'Type',t:'text'},{k:'status',label:'Status',t:'select',opts:['present','absent']}],obj:{...a}};}
-  if(type==='lesson'){const l=data.lessons[index];return {title:'Edit Lesson',fields:[{k:'title',label:'Lesson Title',t:'text'},{k:'module',label:'Module',t:'text'},{k:'status',label:'Status',t:'select',opts:['done','progress','locked']},{k:'pct',label:'Progress %',t:'number'},{k:'score',label:'Score % (blank allowed)',t:'number'}],obj:{...l,score:l.score??''}};}
-  if(type==='tournament'){const t=data.tournaments[index];return {title:'Edit Tournament',fields:[{k:'name',label:'Name',t:'text'},{k:'date',label:'Date',t:'text'},{k:'type',label:'Type',t:'select',opts:['obligatory','optional']},{k:'status',label:'Status',t:'select',opts:['registered','eligible']}],obj:{...t}};}
-  if(type==='skill'){const key=Object.keys(data.skills||{})[index];return {title:'Edit Skill',fields:[{k:'name',label:'Skill Name',t:'text'},{k:'pct',label:'Skill %',t:'number'}],obj:{name:key,pct:data.skills[key]}};}
-  if(type==='tree-round'){const round=data.tournamentTrees[currentTournamentIndex]?.rounds?.[index];return {title:'Edit Branch Column',fields:[{k:'name',label:'Column Name',t:'text'}],obj:{name:round?.name||''}};}
-  if(type==='tree-branch'){
-    const [roundIndex,branchIndex]=String(index).split(':').map(Number);
-    const branch=data.tournamentTrees[currentTournamentIndex]?.rounds?.[roundIndex]?.branches?.[branchIndex];
-    return {title:'Edit Branch',fields:[{k:'name',label:'Branch Name',t:'text'},{k:'player1',label:'Player 1 Name',t:'text'},{k:'player2',label:'Player 2 Name',t:'text'},{k:'winner',label:'Winner',t:'text'}],obj:{name:branch?.name||'',player1:branch?.player1||'',player2:branch?.player2||'',winner:branch?.winner||''}};
-  }
-  return {title:'Edit',fields:[],obj:{}};
+  if(type==='attendance'){const a=privateData.attendance[index];return{title:'Edit Attendance',fields:[{k:'date',label:'Date',t:'text'},{k:'day',label:'Day',t:'text'},{k:'type',label:'Type',t:'text'},{k:'status',label:'Status',t:'select',opts:['present','absent']}],obj:{...a}};}
+  if(type==='lesson'){const pub=publicData.lessons[index];const priv=privateData.lessonStatus?.[pub?.title]||{status:'locked',score:null,pct:0};return{title:'Edit Lesson',fields:[{k:'title',label:'Title (public)',t:'text'},{k:'module',label:'Module (public)',t:'text'},{k:'status',label:'Status (private)',t:'select',opts:['done','progress','locked']},{k:'pct',label:'Progress %',t:'number'},{k:'score',label:'Score %',t:'number'}],obj:{title:pub.title,module:pub.module,status:priv.status||'locked',pct:priv.pct||0,score:priv.score??''}};}
+  if(type==='tournament-public'){const t=publicData.tournaments[index];return{title:'Edit Tournament Info',fields:[{k:'name',label:'Name',t:'text'},{k:'date',label:'Date',t:'text'},{k:'type',label:'Type',t:'select',opts:['obligatory','optional']}],obj:{...t}};}
+  if(type==='tournament-status'){const t=publicData.tournaments[index];const ts=privateData.tournamentStatus?.[t.name]||{status:'eligible'};return{title:`Edit Status: ${t.name}`,fields:[{k:'status',label:'Status',t:'select',opts:['registered','eligible']}],obj:{status:ts.status||'eligible'}};}
+  if(type==='skill'){const key=Object.keys(privateData.skills||{})[index];return{title:'Edit Skill',fields:[{k:'name',label:'Skill Name',t:'text'},{k:'pct',label:'Skill %',t:'number'}],obj:{name:key,pct:privateData.skills[key]}};}
+  if(type==='tree-round'){const r=publicData.tournamentTrees[currentTournamentIndex]?.rounds?.[index];return{title:'Edit Column',fields:[{k:'name',label:'Name',t:'text'}],obj:{name:r?.name||''}};}
+  if(type==='tree-branch'){const[ri,bi]=String(index).split(':').map(Number);const b=publicData.tournamentTrees[currentTournamentIndex]?.rounds?.[ri]?.branches?.[bi];return{title:'Edit Match',fields:[{k:'name',label:'Match Name',t:'text'},{k:'player1',label:'Player 1',t:'text'},{k:'player2',label:'Player 2',t:'text'},{k:'winner',label:'Winner (blank if none)',t:'text'}],obj:{name:b?.name||'',player1:b?.player1||'',player2:b?.player2||'',winner:b?.winner||''}};}
+  return{title:'Edit',fields:[],obj:{}};
 }
-
-window.openRecordEditor=(type,index)=>{
-  if(!isTeacher)return toast('Teacher mode required.');
-  const cfg=schemaFor(type,index);
-  editorState={type,index,fields:cfg.fields,draft:cfg.obj,tab:0};
-  g('editor-head').textContent=cfg.title;
-  g('editor-sub').textContent='Use the tabs to edit each piece of information.';
-  renderEditorTabs();
-  g('record-editor-modal').classList.remove('hidden');
-};
+window.openRecordEditor=(type,index)=>{if(!isTeacher)return toast('Teacher mode required.','error-t');const cfg=schemaFor(type,index);edState={type,index,fields:cfg.fields,draft:{...cfg.obj},tab:0};g('editor-head').textContent=cfg.title;renderEdTabs();g('record-editor-modal').classList.remove('hidden');};
 window.closeRecordEditor=()=>g('record-editor-modal').classList.add('hidden');
-
-function renderEditorTabs(){
-  const tabs=g('editor-tabs');
-  tabs.innerHTML=editorState.fields.map((f,i)=>`<button class="e-tab ${i===editorState.tab?'active':''}" onclick="switchEditorTab(${i})">${esc(f.label)}</button>`).join('');
-  renderEditorField();
-}
-window.switchEditorTab=(i)=>{editorState.tab=i;renderEditorTabs();};
-function renderEditorField(){
-  const f=editorState.fields[editorState.tab];
-  g('editor-field-title').textContent=f.label;
-  const v=editorState.draft[f.k]??'';
-  if(f.t==='select'){
-    g('editor-field-input').innerHTML=`<select id="editor-live-input">${f.opts.map(o=>`<option ${String(v)===o?'selected':''}>${o}</option>`).join('')}</select>`;
-  }else{
-    g('editor-field-input').innerHTML=`<input id="editor-live-input" type="${f.t==='number'?'number':'text'}" value="${escAttr(v)}" />`;
-  }
-  g('editor-live-input').addEventListener('input',e=>{editorState.draft[f.k]=e.target.value;});
-}
-
+function renderEdTabs(){g('editor-tabs').innerHTML=edState.fields.map((f,i)=>`<button class="e-tab${i===edState.tab?' active':''}" onclick="switchEdTab(${i})">${esc(f.label)}</button>`).join('');renderEdField();}
+window.switchEdTab=(i)=>{edState.tab=i;renderEdTabs();};
+function renderEdField(){const f=edState.fields[edState.tab];g('editor-field-title').textContent=f.label;const v=edState.draft[f.k]??'';if(f.t==='select'){g('editor-field-input').innerHTML=`<select class="field-input" id="ed-live">${f.opts.map(o=>`<option${String(v)===o?' selected':''}>${o}</option>`).join('')}</select>`;}else{g('editor-field-input').innerHTML=`<input class="field-input" id="ed-live" type="${f.t==='number'?'number':'text'}" value="${escAttr(String(v))}"/>`;}g('ed-live').addEventListener('input',e=>{edState.draft[f.k]=e.target.value;});}
 window.saveRecordEditor=()=>{
-  const {type,index,draft}=editorState;
-  if(type==='attendance'){data.attendance[index]={date:draft.date||'',day:draft.day||'',type:draft.type||'',status:draft.status==='absent'?'absent':'present'};const p=data.attendance.filter(x=>x.status==='present').length;data.sessionsAttended=p;data.attendanceRate=data.attendance.length?Math.round(p/data.attendance.length*100):0;}
-  if(type==='lesson'){data.lessons[index]={...data.lessons[index],title:draft.title||'',module:draft.module||'',status:['done','progress','locked'].includes(draft.status)?draft.status:'progress',pct:Math.max(0,Math.min(100,parseInt(draft.pct||0)||0)),score:draft.score===''?null:parseInt(draft.score)||null};}
-  if(type==='tournament'){data.tournaments[index]={name:draft.name||'',date:draft.date||'',type:draft.type==='obligatory'?'obligatory':'optional',status:draft.status==='registered'?'registered':'eligible'};data.tournamentsRegistered=(data.tournaments||[]).filter(t=>t.status==='registered').length;}
-  if(type==='skill'){const oldKey=Object.keys(data.skills||{})[index];if(oldKey)delete data.skills[oldKey];const nm=(draft.name||'New Skill').trim();data.skills[nm]=Math.max(0,Math.min(100,parseInt(draft.pct||0)||0));}
-  if(type==='tree-round'){
-    const round=data.tournamentTrees[currentTournamentIndex]?.rounds?.[index];
-    if(round) round.name=(draft.name||'Round').trim()||'Round';
-  }
-  if(type==='tree-branch'){
-    const [roundIndex,branchIndex]=String(index).split(':').map(Number);
-    const branch=data.tournamentTrees[currentTournamentIndex]?.rounds?.[roundIndex]?.branches?.[branchIndex];
-    if(branch) Object.assign(branch,{name:(draft.name||'Branch').trim()||'Branch',player1:(draft.player1||'TBD').trim()||'TBD',player2:(draft.player2||'TBD').trim()||'TBD',winner:(draft.winner||'').trim()});
-  }
-  closeRecordEditor();
-  render();
+  const{type,index,draft}=edState;
+  if(type==='attendance'){privateData.attendance[index]={date:draft.date||'',day:draft.day||'',type:draft.type||'',status:draft.status==='absent'?'absent':'present'};recalcAtt();}
+  if(type==='lesson'){const pub=publicData.lessons[index];const old=pub.title;pub.title=draft.title||old;pub.module=draft.module||'General';if(!privateData.lessonStatus)privateData.lessonStatus={};delete privateData.lessonStatus[old];privateData.lessonStatus[pub.title]={status:['done','progress','locked'].includes(draft.status)?draft.status:'locked',pct:Math.max(0,Math.min(100,parseInt(draft.pct)||0)),score:draft.score===''||draft.score==null?null:parseFloat(draft.score)||null};}
+  if(type==='tournament-public'){publicData.tournaments[index]={name:draft.name||'',date:draft.date||'TBD',type:draft.type==='obligatory'?'obligatory':'optional'};}
+  if(type==='tournament-status'){const tn=publicData.tournaments[index]?.name;if(!privateData.tournamentStatus)privateData.tournamentStatus={};privateData.tournamentStatus[tn]={status:draft.status==='registered'?'registered':'eligible'};privateData.tournamentsRegistered=Object.values(privateData.tournamentStatus).filter(x=>x.status==='registered').length;}
+  if(type==='skill'){const old=Object.keys(privateData.skills||{})[index];if(old)delete privateData.skills[old];privateData.skills[(draft.name||'Skill').trim()]=Math.max(0,Math.min(100,parseInt(draft.pct)||0));}
+  if(type==='tree-round'){const r=publicData.tournamentTrees[currentTournamentIndex]?.rounds?.[index];if(r)r.name=(draft.name||'Round').trim()||'Round';}
+  if(type==='tree-branch'){const[ri,bi]=String(index).split(':').map(Number);const b=publicData.tournamentTrees[currentTournamentIndex]?.rounds?.[ri]?.branches?.[bi];if(b)Object.assign(b,{name:(draft.name||'Match').trim(),player1:(draft.player1||'TBD').trim(),player2:(draft.player2||'TBD').trim(),winner:(draft.winner||'').trim()});}
+  closeRecordEditor();render();toast('Saved.','success');
 };
 
-window.saveProfile=async()=>{const name=g('profile-name').value.trim();if(!name)return toast('Name is required.');data.name=name;data.dob=g('profile-dob').value;await updateDoc(doc(db,'students',currentUser.uid),{name:data.name,dob:data.dob,updatedAt:serverTimestamp()});render();toast('Profile saved.');};
-window.doLogin=async()=>{const email=g('login-email').value.trim(),pass=g('login-password').value;g('auth-error').textContent='';if(!email||!pass){g('auth-error').textContent='Email and password are required.';return}if(pass.length<6){g('auth-error').textContent='Password must be at least 6 characters.';return}
-try{await signInWithEmailAndPassword(auth,email,pass)}catch{g('auth-error').textContent='Invalid email or password.'}}
+/* ── PROFILE ── */
+window.saveProfile=async()=>{const name=g('profile-name').value.trim();if(!name)return toast('Name required.','error-t');privateData.name=name;privateData.dob=g('profile-dob').value;await persistPrivate(['name','dob','updatedAt']);render();toast('Profile saved.','success');};
 
-function enterTeacher(){isTeacher=true;document.body.classList.add('teacher-mode');g('teacher-pill').classList.remove('hidden');g('enter-teacher').classList.add('hidden');g('signout-teacher').classList.remove('hidden');g('save-all').classList.remove('hidden');document.querySelectorAll('.t-panel').forEach(x=>x.classList.add('show'));render();toast('Teacher mode enabled.')} 
+/* ── TEACHER ── */
+window.openTeacherModal=()=>{g('teacher-modal').classList.remove('hidden');g('teacher-pw').value='';g('teacher-error').textContent='';setTimeout(()=>g('teacher-pw').focus(),50);};
+window.closeTeacherModal=()=>g('teacher-modal').classList.add('hidden');
+window.verifyTeacher=()=>{if(g('teacher-pw').value===TEACHER_PW){closeTeacherModal();enterTeacher();}else g('teacher-error').textContent='Incorrect password.';};
+function enterTeacher(){isTeacher=true;document.body.classList.add('teacher-mode');g('teacher-pill').classList.remove('hidden');g('enter-teacher').classList.add('hidden');g('signout-teacher').classList.remove('hidden');g('save-all').classList.remove('hidden');document.querySelectorAll('.t-panel').forEach(x=>x.classList.add('show'));render();toast('🛡️ Teacher mode enabled.','success');}
 function exitTeacher(){isTeacher=false;document.body.classList.remove('teacher-mode');g('teacher-pill').classList.add('hidden');g('enter-teacher').classList.remove('hidden');g('signout-teacher').classList.add('hidden');g('save-all').classList.add('hidden');document.querySelectorAll('.t-panel').forEach(x=>x.classList.remove('show'));render();}
-window.openTeacherModal=()=>{g('teacher-modal').classList.remove('hidden');g('teacher-pw').value='';g('teacher-error').textContent='';setTimeout(()=>g('teacher-pw').focus(),30)};window.closeTeacherModal=()=>g('teacher-modal').classList.add('hidden');window.verifyTeacher=()=>{if(g('teacher-pw').value===TEACHER_PASSWORD){closeTeacherModal();enterTeacher()}else g('teacher-error').textContent='Incorrect password.'}
+g('enter-teacher').addEventListener('click',openTeacherModal);
+g('signout-teacher').addEventListener('click',()=>{exitTeacher();toast('Exited teacher mode.');});
+g('save-all').addEventListener('click',async()=>{if(!isTeacher)return toast('Teacher mode required.','error-t');collectEditable();await Promise.all([persistPrivate(),persistPublic()]);toast('✅ All edits saved.','success');});
+g('logout').addEventListener('click',async()=>{exitTeacher();if(chatUnsub)chatUnsub();if(pubUnsub)pubUnsub();await signOut(auth);});
 
-window.openPage=(key)=>{document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.page===key));document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id===`page-${key}`));g('page-title').textContent=meta[key][0];g('page-sub').textContent=meta[key][1]}
+/* ── CHAT BADGE ── */
+function updateChatBadge(){const b=g('chat-badge');if(unreadChat>0){b.classList.remove('hidden');b.textContent=unreadChat>9?'9+':unreadChat;}else b.classList.add('hidden');}
 
-document.querySelectorAll('.nav-item').forEach(n=>n.addEventListener('click',()=>openPage(n.dataset.page)));g('enter-teacher').addEventListener('click',openTeacherModal);g('signout-teacher').addEventListener('click',()=>{exitTeacher();toast('Signed out as Teacher.')});
-g('save-all').addEventListener('click',async()=>{if(!isTeacher)return toast('Teacher mode required.');collectEditable();await persist();toast('All teacher edits saved to Firestore.')});
-g('logout').addEventListener('click',async()=>{exitTeacher();await signOut(auth)});
+/* ── CLOSE DROPDOWNS ── */
+function closeAllDropdowns(){if(activeDropdown){activeDropdown.remove();activeDropdown=null;}}
+document.addEventListener('click',closeAllDropdowns);
 
-onAuthStateChanged(auth,async user=>{if(!user){currentUser=null;g('auth-screen').classList.remove('hidden');g('app-shell').classList.add('hidden');return}currentUser=user;const ref=doc(db,'students',user.uid);let snap=await getDoc(ref);if(!snap.exists()){await setDoc(ref,defaults(user.displayName||user.email.split('@')[0],user.email));snap=await getDoc(ref)}data=snap.data();if(!data.tournaments)data.tournaments=[];ensureTournamentTrees();render();g('auth-screen').classList.add('hidden');g('app-shell').classList.remove('hidden')});
+/* ── RENDER CHAT MSG ── */
+function renderChatMsg(msg,isOwn,docId){
+  const initials=(msg.senderName||'?').split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+  const time=msg.createdAt?.toDate?msg.createdAt.toDate().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):msg.tempTime||'...';
+  const edited=msg.edited?`<span class="bubble-edited"> · edited</span>`:'';
+  const canAct=isOwn||isTeacher;
+
+  // Reactions
+  const reactions=msg.reactions||{};
+  const rGroups={};
+  Object.entries(reactions).forEach(([uid,emoji])=>{if(!rGroups[emoji])rGroups[emoji]=[];rGroups[emoji].push(uid);});
+  const hasReactions=Object.keys(rGroups).length>0;
+  const reactionsHTML=hasReactions?`<div class="reactions-overlay">${Object.entries(rGroups).map(([emoji,uids])=>`<span class="reaction-chip${uids.includes(currentUser.uid)?' mine':''}" onclick="toggleReaction('${docId}','${emoji}')">${emoji}<span class="r-count">${uids.length}</span></span>`).join('')}</div>`:'';
+
+  // Reply quote — contrast differs based on own vs received
+  const bubbleClass=isOwn?'bubble-own':'bubble-received';
+  const replyHTML=msg.replyTo?`<div class="reply-quote" onclick="scrollToMsg('${msg.replyTo.id}')"><div class="rq-author">${esc(msg.replyTo.senderName)}</div><div class="rq-text">${esc((msg.replyTo.text||'').slice(0,80))}${(msg.replyTo.text||'').length>80?'…':''}</div></div>`:'';
+
+  return`<div class="chat-msg${isOwn?' own':''}" id="msg-${docId}">
+    ${!isOwn?`<div class="chat-avatar">${initials}</div>`:''}
+    <div class="chat-msg-wrap">
+      ${!isOwn?`<div class="chat-sender-name">${esc(msg.senderName||'Unknown')}</div>`:''}
+      <div class="bubble-outer" style="${hasReactions?'padding-bottom:18px':''}">
+        <div class="chat-bubble ${bubbleClass}" id="bubble-${docId}">
+          ${replyHTML}
+          <div id="msg-text-${docId}">${esc(msg.text||'')}</div>
+          <div class="bubble-meta">
+            <span class="bubble-time">${time}${edited}</span>
+            <button class="msg-menu-btn" data-id="${docId}" data-own="${isOwn}" data-can="${canAct}" onclick="event.stopPropagation();handleMsgMenu(event,this)">•••</button>
+          </div>
+        </div>
+        ${reactionsHTML}
+      </div>
+    </div>
+    ${isOwn?`<div class="chat-avatar">${initials}</div>`:''}
+  </div>`;
+}
+
+/* ── SUBSCRIBE CHAT ── */
+function subscribeChat(){
+  if(chatUnsub)chatUnsub();
+  const q=query(collection(db,'chat'),orderBy('createdAt','asc'),limit(200));
+  const chatEl=g('chat-messages');
+  const isOnChat=()=>g('page-chat').classList.contains('active');
+  let firstLoad=true;
+  chatUnsub=onSnapshot(q,snap=>{
+    const atBottom=chatEl.scrollHeight-chatEl.scrollTop-chatEl.clientHeight<80;
+    chatEl.innerHTML='';
+    snap.forEach(d=>{
+      const msg=d.data();
+      const isOwn=currentUser&&msg.senderId===currentUser.uid;
+      chatEl.insertAdjacentHTML('beforeend',renderChatMsg(msg,isOwn,d.id));
+    });
+    if(!firstLoad&&!isOnChat()){unreadChat++;updateChatBadge();}
+    firstLoad=false;
+    if(atBottom||isOnChat())chatEl.scrollTop=chatEl.scrollHeight;
+  });
+}
+
+/* ── SEND ── */
+window.sendChatMessage=async()=>{
+  const input=g('chat-input'),text=input.value.trim();
+  if(!text)return;
+  const msg={senderId:currentUser.uid,senderName:privateData?.name||currentUser.email?.split('@')[0]||'Student',text,createdAt:serverTimestamp()};
+  if(replyingTo){msg.replyTo=replyingTo;cancelReply();}
+  input.value='';input.style.height='';
+  try{await addDoc(collection(db,'chat'),msg);}catch{toast('Failed to send.','error-t');}
+};
+g('chat-input').addEventListener('input',function(){this.style.height='';this.style.height=Math.min(this.scrollHeight,120)+'px';});
+
+/* ── MSG MENU ── */
+window.handleMsgMenu=(event,btn)=>{
+  const docId=btn.dataset.id,isOwn=btn.dataset.own==='true',canAct=btn.dataset.can==='true';
+  openMsgMenu(event,docId,isOwn,canAct);
+};
+window.openMsgMenu=(event,docId,isOwn,canAct)=>{
+  event.stopPropagation();closeAllDropdowns();
+  const menu=document.createElement('div');
+  menu.className='msg-dropdown';
+  menu.innerHTML=`<button onclick="openEmojiPicker(event,'${docId}')">😊 React</button><button onclick="startReply('${docId}')">↩️ Reply</button>${canAct?`<div class="divider"></div><button onclick="editChatMsg('${docId}')">✏️ Edit</button><button class="danger" onclick="deleteChatMsg('${docId}')">🗑️ Delete</button>`:''}`;
+  document.body.appendChild(menu);activeDropdown=menu;
+  const r=event.currentTarget.getBoundingClientRect();
+  menu.style.position='fixed';
+  const spaceBelow=window.innerHeight-r.bottom;
+  if(spaceBelow<150)menu.style.bottom=(window.innerHeight-r.top+4)+'px';
+  else menu.style.top=(r.bottom+4)+'px';
+  menu.style.left=Math.min(r.left,window.innerWidth-160)+'px';
+};
+
+/* ── EMOJI PICKER ── */
+window.openEmojiPicker=(event,docId)=>{
+  event.stopPropagation();closeAllDropdowns();
+  const picker=document.createElement('div');picker.className='emoji-picker';
+  picker.innerHTML=EMOJI_SET.map(e=>`<button onclick="toggleReaction('${docId}','${e}')">${e}</button>`).join('');
+  document.body.appendChild(picker);activeDropdown=picker;
+  const r=event.currentTarget.getBoundingClientRect();
+  picker.style.position='fixed';picker.style.top=(r.bottom+4)+'px';picker.style.left=Math.min(r.left,window.innerWidth-230)+'px';
+};
+
+/* ── REACTIONS ── */
+window.toggleReaction=async(docId,emoji)=>{
+  closeAllDropdowns();
+  const ref=doc(db,'chat',docId);const snap=await getDoc(ref);if(!snap.exists())return;
+  const r=snap.data().reactions||{};
+  if(r[currentUser.uid]===emoji)delete r[currentUser.uid];else r[currentUser.uid]=emoji;
+  try{await updateDoc(ref,{reactions:r});}catch{toast('Failed to react.','error-t');}
+};
+
+/* ── REPLY ── */
+window.startReply=(docId)=>{
+  closeAllDropdowns();
+  const textEl=g(`msg-text-${docId}`),msgEl=g(`msg-${docId}`);if(!textEl||!msgEl)return;
+  const nameEl=msgEl.querySelector('.chat-sender-name');
+  const name=nameEl?nameEl.textContent.trim():(privateData?.name||'You');
+  replyingTo={id:docId,text:textEl.textContent,senderName:name};
+  let slot=g('reply-banner-slot');slot.innerHTML='';
+  const banner=document.createElement('div');banner.className='reply-banner';
+  banner.innerHTML=`<div class="reply-banner-content"><div class="reply-banner-author">Replying to ${esc(name)}</div><div class="reply-banner-text">${esc((replyingTo.text||'').slice(0,80))}</div></div><button class="reply-banner-cancel" onclick="cancelReply()">✕</button>`;
+  slot.appendChild(banner);g('chat-input').focus();
+};
+window.cancelReply=()=>{replyingTo=null;g('reply-banner-slot').innerHTML='';};
+window.scrollToMsg=(docId)=>{
+  const el=g(`msg-${docId}`);if(!el)return;
+  el.scrollIntoView({behavior:'smooth',block:'center'});
+  el.style.transition='background .3s';el.style.background='rgba(59,130,246,.12)';el.style.borderRadius='12px';
+  setTimeout(()=>{el.style.background='';el.style.borderRadius='';},1500);
+};
+
+/* ── EDIT MSG ── */
+window.editChatMsg=(docId)=>{
+  closeAllDropdowns();
+  const bubble=g(`bubble-${docId}`),textEl=g(`msg-text-${docId}`);if(!bubble||!textEl)return;
+  const original=textEl.textContent;
+  const isOwn=bubble.classList.contains('bubble-own');
+  textEl.outerHTML=`<textarea class="edit-textarea" id="edit-input-${docId}">${original}</textarea>`;
+  const timeRow=bubble.querySelector('.bubble-meta');
+  const ea=document.createElement('div');ea.id=`edit-actions-${docId}`;ea.style.cssText='display:flex;justify-content:flex-end;gap:6px;margin-top:8px';
+  ea.innerHTML=`<button onclick="cancelEditMsg('${docId}','${escAttr(original)}')" style="background:rgba(${isOwn?'255,255,255':'0,0,0'},.15);border:none;border-radius:7px;padding:5px 12px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;color:inherit;opacity:.8">Cancel</button><button onclick="confirmEditMsg('${docId}')" style="background:rgba(${isOwn?'255,255,255':'59,130,246'},.25);border:none;border-radius:7px;padding:5px 12px;font:inherit;font-size:12px;font-weight:700;cursor:pointer;color:inherit">Update</button>`;
+  if(timeRow)bubble.insertBefore(ea,timeRow);else bubble.appendChild(ea);
+  const ta=g(`edit-input-${docId}`);ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';
+  ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=ta.scrollHeight+'px';});
+  ta.focus();ta.selectionStart=ta.selectionEnd=ta.value.length;
+  ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();confirmEditMsg(docId);}if(e.key==='Escape')cancelEditMsg(docId,original);});
+};
+window.cancelEditMsg=(docId,original)=>{
+  const ta=g(`edit-input-${docId}`),ea=g(`edit-actions-${docId}`);
+  if(ta){const div=document.createElement('div');div.id=`msg-text-${docId}`;div.style.cssText='line-height:1.55;word-break:break-word';div.textContent=original;ta.replaceWith(div);}
+  if(ea)ea.remove();
+};
+window.confirmEditMsg=async(docId)=>{
+  const ta=g(`edit-input-${docId}`);if(!ta)return;
+  const newText=ta.value.trim();if(!newText)return toast('Cannot be empty.','error-t');
+  try{await updateDoc(doc(db,'chat',docId),{text:newText,edited:true});toast('Updated.','success');}catch{toast('Failed.','error-t');}
+};
+
+/* ── DELETE MSG ── */
+window.deleteChatMsg=async(docId)=>{
+  closeAllDropdowns();if(!confirm('Delete this message?'))return;
+  try{await deleteDoc(doc(db,'chat',docId));toast('Deleted.','success');}catch{toast('Failed.','error-t');}
+};
+
+/* ── SWIPE TO REPLY ── */
+function initSwipe(){
+  const chatEl=g('chat-messages');
+  let startX=0,startY=0,curEl=null,swiped=false;
+  chatEl.addEventListener('touchstart',e=>{const m=e.target.closest('.chat-msg');if(!m)return;startX=e.touches[0].clientX;startY=e.touches[0].clientY;curEl=m;swiped=false;},{passive:true});
+  chatEl.addEventListener('touchmove',e=>{
+    if(!curEl)return;
+    const dx=e.touches[0].clientX-startX,dy=e.touches[0].clientY-startY;
+    if(Math.abs(dy)>Math.abs(dx)){curEl=null;return;}
+    const isOwn=curEl.classList.contains('own'),dir=isOwn?-1:1,delta=dx*dir;
+    if(delta<0){curEl=null;return;}
+    const clamped=Math.min(delta,72);curEl.classList.add('swiping');curEl.style.transform=`translateX(${clamped*dir}px)`;
+    let ind=curEl.querySelector('.swipe-indicator');
+    if(!ind){ind=document.createElement('span');ind.className='swipe-indicator';ind.textContent='↩️';curEl.style.position='relative';curEl.appendChild(ind);}
+    ind.style.opacity=Math.min(clamped/50,1);if(clamped>=60)swiped=true;
+  },{passive:true});
+  chatEl.addEventListener('touchend',()=>{
+    if(!curEl)return;
+    curEl.classList.remove('swiping');curEl.style.transform='';
+    const ind=curEl.querySelector('.swipe-indicator');if(ind)ind.style.opacity=0;
+    if(swiped){const id=curEl.id.replace('msg-','');startReply(id);}
+    curEl=null;swiped=false;
+  });
+}
+
+/* ── AUTH STATE ── */
+onAuthStateChanged(auth,async user=>{
+  if(!user){currentUser=null;g('auth-screen').classList.remove('hidden');g('app-shell').classList.add('hidden');return;}
+  currentUser=user;
+  await ensurePublicDoc();
+  const privRef=doc(db,'students',user.uid);
+  let snap=await getDoc(privRef);
+  if(!snap.exists()){await setDoc(privRef,privateDefaults(user.displayName||user.email.split('@')[0],user.email));snap=await getDoc(privRef);}
+  privateData=snap.data();
+  if(!privateData.attendance)privateData.attendance=[];
+  if(!privateData.skills)privateData.skills={};
+  if(!privateData.lessonStatus)privateData.lessonStatus={};
+  if(!privateData.tournamentStatus)privateData.tournamentStatus={};
+  render();subscribePub();subscribeChat();initSwipe();
+  g('auth-screen').classList.add('hidden');g('app-shell').classList.remove('hidden');
+});
 </script>
 </body>
 </html>
