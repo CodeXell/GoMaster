@@ -601,16 +601,36 @@ body.tmode [data-edit]:focus { outline-color: var(--violet); }
 .lc-title { font-size: 14.5px; font-weight: 700; color: var(--ink); line-height: 1.35; }
 
 /* ═══════════════════════════════════════
-   BRACKET
+   BRACKET — SVG visual tree
 ═══════════════════════════════════════ */
-.bracket { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
-.round { min-width: 200px; background: #f7f9ff; border: 1px solid rgba(0,0,0,.07); border-radius: var(--r); padding: 12px; flex-shrink: 0; }
-.round h4 { font-size: 13px; font-weight: 800; color: var(--ink); margin-bottom: 10px; letter-spacing: -.01em; display: flex; justify-content: space-between; align-items: flex-start; gap: 6px; flex-wrap: wrap; }
-.match { background: #fff; border: 1px solid rgba(0,0,0,.08); border-radius: var(--rS); padding: 10px; margin-bottom: 7px; }
-.mp { font-size: 13.5px; padding: 3px 0; }
-.mp.w { font-weight: 800; color: var(--green); }
-.msep { font-size: 10px; color: var(--ink3); text-align: center; padding: 2px 0; }
-.mlbl { font-size: 10.5px; color: var(--ink3); margin-bottom: 6px; font-weight: 600; }
+.bracket-scroll { overflow-x: auto; overflow-y: visible; -webkit-overflow-scrolling: touch; padding: 4px 4px 14px; }
+.bracket-svg { display: block; overflow: visible; touch-action: pan-x pan-y; }
+.bk-teacher-bar { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 10px; padding: 10px 12px; background: #faf5ff; border: 1.5px dashed #d8b4fe; border-radius: var(--r); }
+/* ═══════════════════════════════════════
+   CELEBRATION OVERLAY
+═══════════════════════════════════════ */
+#celebration { position: fixed; inset: 0; z-index: 800; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(160deg, #0c1e42 0%, #1a0f3d 50%, #0c1e42 100%); animation: celebIn .5s var(--ease); overflow: hidden; padding: calc(var(--st) + 20px) 20px calc(var(--sb2) + 20px); }
+#celebration.hidden { display: none !important; }
+@keyframes celebIn { from { opacity:0; } to { opacity:1; } }
+.celeb-bg { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+#confetti-cv { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.celeb-glow { position: absolute; border-radius: 50%; filter: blur(90px); opacity: .55; animation: glowP 3s ease-in-out infinite alternate; }
+.cg1 { width: 420px; height: 420px; background: radial-gradient(circle, rgba(251,191,36,.28), transparent 70%); top: -100px; left: -100px; }
+.cg2 { width: 320px; height: 320px; background: radial-gradient(circle, rgba(124,58,237,.3), transparent 70%); bottom: -80px; right: -80px; animation-delay: -1.5s; }
+@keyframes glowP { 0% { transform:scale(1); } 100% { transform:scale(1.18); } }
+.celeb-body { position: relative; z-index: 2; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; max-width: 340px; width: 100%; }
+.celeb-trophy { font-size: 76px; line-height: 1; animation: trophyBounce 1s var(--spring) .25s both; filter: drop-shadow(0 10px 36px rgba(251,191,36,.65)); }
+@keyframes trophyBounce { 0% { opacity:0; transform:scale(0) rotate(-20deg); } 55% { transform:scale(1.18) rotate(6deg); } 80% { transform:scale(.94) rotate(-2deg); } 100% { opacity:1; transform:scale(1) rotate(0); } }
+.celeb-lbl { font-size: 12px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.45); animation: fuA .5s var(--ease) .6s both; }
+.celeb-name { font-size: clamp(26px,9vw,44px); font-weight: 900; color: #fff; letter-spacing: -.04em; line-height: 1.1; animation: fuA .5s var(--ease) .75s both; text-shadow: 0 4px 28px rgba(251,191,36,.45); }
+.celeb-tour { font-size: 14px; color: rgba(255,255,255,.45); font-weight: 600; animation: fuA .5s var(--ease) .9s both; }
+.celeb-stars { display: flex; gap: 6px; animation: fuA .4s var(--ease) 1s both; }
+.celeb-star { font-size: 24px; animation: starPop .4s var(--spring) both; }
+.celeb-star:nth-child(1){animation-delay:1.05s} .celeb-star:nth-child(2){animation-delay:1.15s} .celeb-star:nth-child(3){animation-delay:1.25s} .celeb-star:nth-child(4){animation-delay:1.35s} .celeb-star:nth-child(5){animation-delay:1.45s}
+@keyframes starPop { from{opacity:0;transform:scale(0) rotate(-30deg);} to{opacity:1;transform:scale(1) rotate(0);} }
+@keyframes fuA { from{opacity:0;transform:translateY(18px);} to{opacity:1;transform:translateY(0);} }
+.celeb-close { margin-top: 6px; background: rgba(255,255,255,.11); border: 1.5px solid rgba(255,255,255,.18); color: #fff; border-radius: 999px; padding: 13px 32px; font: inherit; font-size: 15px; font-weight: 700; cursor: pointer; touch-action: manipulation; min-height: 52px; transition: background .14s, transform .12s; animation: fuA .5s var(--ease) 1.7s both; }
+.celeb-close:active { background: rgba(255,255,255,.22); transform: scale(.97); }
 
 /* ═══════════════════════════════════════
    CHAT
@@ -948,6 +968,40 @@ body.tmode [data-edit]:focus { outline-color: var(--violet); }
   .pg-wrap { padding: 8px; padding-bottom: calc(8px + var(--bn) + var(--sb2)); }
   .chat-wrap { height: calc(100dvh - var(--tb) - var(--st) - var(--tt) - var(--bn) - var(--sb2) - 16px); }
 }
+
+/* ── ANNOUNCEMENT CARDS ─────────────────────────── */
+.ann-card {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--r); overflow: hidden;
+  animation: pgIn .26s var(--ease);
+}
+.ann-card-head {
+  padding: 13px 16px 11px;
+  border-bottom: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;
+}
+.ann-card-head h3 { font-size: 15px; font-weight: 800; color: var(--ink); letter-spacing: -.02em; flex: 1; min-width: 0; line-height: 1.3; }
+.ann-meta { font-size: 11px; color: var(--ink3); white-space: nowrap; flex-shrink: 0; margin-top: 2px; }
+.ann-body { padding: 14px 16px; font-size: 14px; line-height: 1.8; color: var(--ink); }
+/* Markdown rendered inside ann-body */
+.ann-body h1,.ann-body h2,.ann-body h3 { font-weight: 800; color: var(--ink); margin: 10px 0 4px; letter-spacing: -.02em; }
+.ann-body h1 { font-size: 18px; }
+.ann-body h2 { font-size: 16px; }
+.ann-body h3 { font-size: 14px; }
+.ann-body strong { font-weight: 800; }
+.ann-body em { font-style: italic; }
+.ann-body ul,.ann-body ol { padding-left: 18px; margin: 6px 0; }
+.ann-body li { margin: 3px 0; }
+.ann-body code { background: #f1f5f9; border-radius: 5px; padding: 1px 5px; font-family: var(--mono); font-size: 12.5px; color: var(--violet); }
+.ann-body hr { border: none; border-top: 1px solid var(--line); margin: 10px 0; }
+.ann-body a { color: var(--blue); text-decoration: underline; }
+.ann-new-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: #fef3c7; color: #b45309;
+  border: 1px solid #fde68a; border-radius: 999px;
+  font-size: 10.5px; font-weight: 800; padding: 2px 8px;
+  flex-shrink: 0; align-self: flex-start;
+}
 </style>
 </head>
 <body>
@@ -984,7 +1038,7 @@ body.tmode [data-edit]:focus { outline-color: var(--violet); }
       <button class="ni" data-pg="lessons"><span class="ni-ic">📖</span>Lessons</button>
       <button class="ni" data-pg="progress"><span class="ni-ic">📈</span>Progress</button>
       <button class="ni" data-pg="tournaments"><span class="ni-ic">🏆</span>Tournaments</button>
-      <button class="ni" data-pg="announcements"><span class="ni-ic">📢</span>Announcements</button>
+      <button class="ni" data-pg="announcements"><span class="ni-ic">📢</span>Announcements<span class="ni-badge hidden" id="abadge">0</span></button>
       <button class="ni" data-pg="chat"><span class="ni-ic">💬</span>Chat<span class="ni-badge hidden" id="cbadge">0</span></button>
       <button class="ni" data-pg="profile"><span class="ni-ic">👤</span>Profile</button>
     </nav>
@@ -1022,7 +1076,7 @@ body.tmode [data-edit]:focus { outline-color: var(--violet); }
       <button class="tt-b" onclick="qnav('lessons','les-panel')">+ Lesson</button>
       <button class="tt-b" onclick="qnav('progress','prog-panel')">+ Skill</button>
       <button class="tt-b" onclick="qnav('tournaments','tour-panel')">+ Tournament</button>
-      <button class="tt-b tt-a" onclick="nav('announcements')">✏️ Announce</button>
+      <button class="tt-b tt-a" onclick="nav('announcements');setTimeout(()=>{const el=g('ann-panel');if(el)el.scrollIntoView({behavior:'smooth'})},180)">✏️ Announce</button>
       <button class="tt-b" onclick="nav('profile')">👤 Profile</button>
       <button class="tt-b tt-r" onclick="resetStudent()">🗑 Reset</button>
     </div>
@@ -1128,14 +1182,44 @@ body.tmode [data-edit]:focus { outline-color: var(--violet); }
         <!-- TOURNAMENT TREE -->
         <section class="pg" id="pg-tournament-tree">
           <div class="card">
-            <div class="ch"><h3 id="tree-ttl">Bracket</h3><div class="ar"><button class="btn-e tap" onclick="nav('tournaments')">← Back</button><button id="add-round-btn" class="btn-a tap hidden" onclick="addRound()">+ Round</button></div></div>
-            <div class="cb"><p style="font-size:12.5px;color:var(--ink3);margin-bottom:12px" id="tree-sub"></p><div id="tree-wrap" class="bracket"></div></div>
+            <div class="ch">
+              <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+                <h3 id="tree-ttl">Bracket</h3>
+                <span style="font-size:12px;color:var(--ink3)" id="tree-sub"></span>
+              </div>
+              <div class="ar">
+                <button class="btn-e tap" onclick="nav('tournaments')">← Back</button>
+              </div>
+            </div>
+            <div class="cb" style="padding:10px">
+              <div id="bk-tbar" class="bk-teacher-bar hidden">
+                <span style="font-size:11px;font-weight:800;color:var(--violet);letter-spacing:.06em;text-transform:uppercase;align-self:center">🛡️ Edit Bracket</span>
+                <button class="btn-a tap" onclick="addRound()" style="font-size:12px;padding:5px 11px;min-height:34px">+ Round</button>
+                <button class="btn-d tap" onclick="delLastRound()" style="font-size:12px;padding:5px 11px;min-height:34px">− Last Round</button>
+                <button class="btn-a tap" onclick="addBranchToLast()" style="font-size:12px;padding:5px 11px;min-height:34px">+ Match (last round)</button>
+              </div>
+              <div class="bracket-scroll">
+                <div id="tree-wrap" style="position:relative"></div>
+              </div>
+            </div>
           </div>
         </section>
 
         <!-- ANNOUNCEMENTS -->
         <section class="pg" id="pg-announcements">
-          <div class="card"><div class="ch"><h3>📢 Announcements</h3></div><div class="cb" data-edit="announcementsDetail" data-scope="public" style="font-size:14px;line-height:1.85"></div></div>
+          <!-- Teacher add form -->
+          <div class="tp" id="ann-panel">
+            <div class="tp-h">Post New Announcement</div>
+            <div style="display:flex;flex-direction:column;gap:10px">
+              <div><label class="fl">Title</label><input class="fi" id="ann-title" placeholder="Announcement title" style="font-size:16px"/></div>
+              <div><label class="fl">Content (Markdown supported)</label><textarea class="fi" id="ann-body" placeholder="Write your announcement here...&#10;&#10;**bold**, *italic*, - lists, ## headings..." style="min-height:110px;font-size:15px;resize:vertical"></textarea></div>
+            </div>
+            <div class="ar" style="margin-top:11px">
+              <button class="btn-a tap" onclick="postAnnouncement()">📢 Post Announcement</button>
+            </div>
+          </div>
+          <!-- Announcements list -->
+          <div id="ann-list"></div>
         </section>
 
         <!-- CHAT -->
@@ -1179,7 +1263,7 @@ body.tmode [data-edit]:focus { outline-color: var(--violet); }
       <button class="bni" data-pg="schedule"  onclick="nav('schedule')"><span class="bni-ic">📅</span><span>Schedule</span></button>
       <button class="bni" data-pg="chat" onclick="nav('chat')"><span class="bni-ic">💬</span><span>Chat</span><span class="bni-dot hidden" id="cdot"></span></button>
       <button class="bni" data-pg="progress"  onclick="nav('progress')"><span class="bni-ic">📈</span><span>Progress</span></button>
-      <button class="bni" onclick="openMore()"><span class="bni-ic">⋯</span><span>More</span></button>
+      <button class="bni" onclick="openMore()"><span class="bni-ic">⋯</span><span>More</span><span class="bni-dot hidden" id="adot"></span></button>
     </div>
   </nav>
 
@@ -1231,6 +1315,26 @@ body.tmode [data-edit]:focus { outline-color: var(--violet); }
   </div>
 </div>
 
+
+<!-- CELEBRATION OVERLAY -->
+<div id="celebration" class="hidden">
+  <div class="celeb-bg">
+    <canvas id="confetti-cv"></canvas>
+    <div class="celeb-glow cg1"></div>
+    <div class="celeb-glow cg2"></div>
+  </div>
+  <div class="celeb-body">
+    <div class="celeb-trophy">🏆</div>
+    <div class="celeb-lbl">Tournament Champion</div>
+    <div class="celeb-name" id="celeb-name">—</div>
+    <div class="celeb-tour" id="celeb-tour"></div>
+    <div class="celeb-stars">
+      <span class="celeb-star">⭐</span><span class="celeb-star">⭐</span><span class="celeb-star">🌟</span><span class="celeb-star">⭐</span><span class="celeb-star">⭐</span>
+    </div>
+    <button class="celeb-close tap" onclick="closeCelebration()">Continue →</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -1245,7 +1349,7 @@ const META={dashboard:['Dashboard','Your academy overview'],schedule:['Schedule'
 const app=initializeApp(FB),auth=getAuth(app),db=getFirestore(app);
 const PDOC=doc(db,'config','public');
 let isT=false,me=null,priv=null,pub=null;
-let curTi=0,chatUnsub=null,pubUnsub=null,unread=0,replyTo=null,activeDD=null;
+let curTi=0,chatUnsub=null,pubUnsub=null,unread=0,annUnread=0,replyTo=null,activeDD=null;
 const g=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const escA=s=>esc(s).replace(/"/g,'&quot;');
@@ -1281,6 +1385,7 @@ window.nav=key=>{
   const m=META[key]||[key,''];
   g('pg-ttl').textContent=m[0];g('pg-sub').textContent=m[1];
   if(key==='chat'){unread=0;updBadge();}
+  if(key==='announcements'){markAnnSeen();}
   g('sa').scrollTop=0;closeSb();
 };
 document.querySelectorAll('.ni').forEach(n=>n.addEventListener('click',()=>nav(n.dataset.pg)));
@@ -1288,12 +1393,12 @@ window.qnav=(pg,id)=>{nav(pg);setTimeout(()=>{const el=g(id);if(el)el.scrollInto
 
 // ── DEFAULT DATA ──
 function defTree(){return{rounds:[{name:'Quarterfinals',branches:[{name:'Branch A',player1:'Student A',player2:'Student B',winner:'Student A'},{name:'Branch B',player1:'Student C',player2:'Student D',winner:''}]},{name:'Semifinal',branches:[{name:'Branch C',player1:'Winner A',player2:'Winner B',winner:''}]},{name:'Final',branches:[{name:'Championship',player1:'Winner C',player2:'TBD',winner:''}]}]};}
-function pubDef(){return{scheduleDetail:'Friday 3:00 PM Technical Lesson\nSaturday 3:00 PM Review & Problems\nSunday 3:00 PM Match Play & Analysis',clubHoursDetail:'Mon–Fri 9:00 AM–7:00 PM\nSat 9:00 AM–7:00 PM\nSun 9:00 AM–7:00 PM',eventsDetail:'• GMAT (Obligatory): Mar 20, 2026\n• Young Masters (Optional): Apr 1, 2026\n• Internal Ladder Review: Every second Sunday.',policyDetail:'Obligatory events require 7-day absence notice. Optional events depend on age/rank eligibility.',announcementsDetail:'1) Weekend club hours extended until 8:00 PM.\n2) New tsumego pack uploaded.\n3) Friendly ladder every Thursday.',tournaments:[{name:'GMAT',date:'Mar 20, 2026',type:'obligatory'},{name:'Young Masters',date:'Apr 01, 2026',type:'optional'}],tournamentTrees:[defTree(),defTree()],lessons:[{title:'Introduction to Direction of Play',module:'Strategy I'},{title:'Basic Tesuji Patterns',module:'Tactics'},{title:'Endgame Counting Basics',module:'Endgame'}],updatedAt:serverTimestamp()};}
-function privDef(name,email){return{name,email,dob:'',enrolledAt:new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),rank:'25 kyu',rankPoints:90,sessionsAttended:0,tournamentsRegistered:0,attendanceRate:0,skills:{},attendance:[],lessonStatus:{},tournamentStatus:{},coachNarrative:'Your journey at GoMaster Academy begins here. Your teacher will update this section.',performanceNotes:'No notes yet.',developmentPlan:'Your development plan will be set by your teacher.',createdAt:serverTimestamp(),updatedAt:serverTimestamp()};}
+function pubDef(){return{scheduleDetail:'Friday 3:00 PM Technical Lesson\nSaturday 3:00 PM Review & Problems\nSunday 3:00 PM Match Play & Analysis',clubHoursDetail:'Mon–Fri 9:00 AM–7:00 PM\nSat 9:00 AM–7:00 PM\nSun 9:00 AM–7:00 PM',eventsDetail:'• GMAT (Obligatory): Mar 20, 2026\n• Young Masters (Optional): Apr 1, 2026\n• Internal Ladder Review: Every second Sunday.',policyDetail:'Obligatory events require 7-day absence notice. Optional events depend on age/rank eligibility.',announcements:[{id:'ann_init',title:'Welcome to GoMaster Academy Portal!',body:'This is your new announcements board.\n\nYour **teacher** will post updates here. You\'ll see a badge whenever new announcements arrive.\n\n- Check back regularly\n- New posts appear at the top',createdAt:Date.now()}],tournaments:[{name:'GMAT',date:'Mar 20, 2026',type:'obligatory'},{name:'Young Masters',date:'Apr 01, 2026',type:'optional'}],tournamentTrees:[defTree(),defTree()],lessons:[{title:'Introduction to Direction of Play',module:'Strategy I'},{title:'Basic Tesuji Patterns',module:'Tactics'},{title:'Endgame Counting Basics',module:'Endgame'}],updatedAt:serverTimestamp()};}
+function privDef(name,email){return{name,email,dob:'',enrolledAt:new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),rank:'25 kyu',rankPoints:90,sessionsAttended:0,tournamentsRegistered:0,attendanceRate:0,skills:{},attendance:[],lessonStatus:{},tournamentStatus:{},coachNarrative:'Your journey at GoMaster Academy begins here. Your teacher will update this section.',performanceNotes:'No notes yet.',developmentPlan:'Your development plan will be set by your teacher.',seenAnnouncements:[],seenWinner:{},createdAt:serverTimestamp(),updatedAt:serverTimestamp()};}
 
 async function ensurePub(){const s=await getDoc(PDOC);if(!s.exists())await setDoc(PDOC,pubDef());pub=s.exists()?s.data():pubDef();sanPub();}
-function sanPub(){if(!pub.lessons)pub.lessons=[];if(!pub.tournaments)pub.tournaments=[];if(!pub.tournamentTrees)pub.tournamentTrees=[];while(pub.tournamentTrees.length<pub.tournaments.length)pub.tournamentTrees.push(defTree());}
-function subPub(){if(pubUnsub)pubUnsub();pubUnsub=onSnapshot(PDOC,s=>{if(!s.exists())return;pub=s.data();sanPub();render();});}
+function sanPub(){if(!pub.lessons)pub.lessons=[];if(!pub.tournaments)pub.tournaments=[];if(!pub.tournamentTrees)pub.tournamentTrees=[];while(pub.tournamentTrees.length<pub.tournaments.length)pub.tournamentTrees.push(defTree());if(!pub.announcements)pub.announcements=[];}
+function subPub(){if(pubUnsub)pubUnsub();pubUnsub=onSnapshot(PDOC,s=>{if(!s.exists())return;const wasLoaded=!!pub;pub=s.data();sanPub();render();if(wasLoaded)checkWinnerCelebrations();});}
 
 async function ppPriv(fields){
   if(!me||!priv)return;
@@ -1331,21 +1436,410 @@ function render(){
   const tours=pub.tournaments||[];const ts=priv.tournamentStatus||{};
   g('tour-body').innerHTML=tours.map((t,i)=>{const s=(ts[t.name]||{status:'eligible'}).status;return`<tr><td style="font-weight:700">${esc(t.name)}</td><td>${esc(t.date)}</td><td><span class="pill ${t.type==='obligatory'?'pill-r':'pill-b'}">${esc(t.type)}</span></td><td><span class="pill ${s==='registered'?'pill-g':'pill-a'}">${s}</span></td><td><div class="ar"><button class="btn-e tap" onclick="viewTour(${i})">Bracket</button>${isT?`<button class="btn-e tap" onclick="editTourStatus(${i})">Status</button><button class="btn-e tap" onclick="editTourPub(${i})">Edit</button><button class="btn-d tap" onclick="delTour(${i})">✕</button>`:''}</div></td></tr>`;}).join('')||'<tr><td colspan="5" style="color:var(--ink3);text-align:center;padding:20px">No tournaments yet.</td></tr>';
   renderTree();
+  renderAnnouncements();
 }
+
+// ── MARKDOWN PARSER (simple) ──
+function mdToHtml(md){
+  if(!md)return'';
+  // Work line-by-line to avoid literal newlines inside regex literals
+  const lines=md.split('\n');
+  const out=[];
+  let i=0;
+  while(i<lines.length){
+    const line=lines[i];
+    // Heading
+    if(/^### /.test(line)){out.push('<h3>'+inl(line.slice(4))+'</h3>');i++;continue;}
+    if(/^## /.test(line)){out.push('<h2>'+inl(line.slice(3))+'</h2>');i++;continue;}
+    if(/^# /.test(line)){out.push('<h1>'+inl(line.slice(2))+'</h1>');i++;continue;}
+    // HR
+    if(/^---+$/.test(line)){out.push('<hr>');i++;continue;}
+    // Unordered list block
+    if(/^- /.test(line)){
+      const items=[];
+      while(i<lines.length&&/^- /.test(lines[i])){items.push('<li>'+inl(lines[i].slice(2))+'</li>');i++;}
+      out.push('<ul>'+items.join('')+'</ul>');continue;
+    }
+    // Ordered list block
+    if(/^\d+\.\s/.test(line)){
+      const items=[];
+      while(i<lines.length&&/^\d+\.\s/.test(lines[i])){items.push('<li>'+inl(lines[i].replace(/^\d+\.\s/,''))+'</li>');i++;}
+      out.push('<ol>'+items.join('')+'</ol>');continue;
+    }
+    // Blank line — paragraph separator
+    if(line.trim()===''){out.push('');i++;continue;}
+    // Regular paragraph line — collect until blank
+    const para=[];
+    while(i<lines.length&&lines[i].trim()!==''&&!/^(#|---|\d+\.\s|- )/.test(lines[i])){para.push(inl(lines[i]));i++;}
+    out.push('<p>'+para.join('<br>')+'</p>');
+  }
+  return out.join('');
+}
+function inl(s){
+  // inline markdown: bold, italic, code, escaped HTML
+  s=esc(s);
+  s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  s=s.replace(/\*(.+?)\*/g,'<em>$1</em>');
+  s=s.replace(/`(.+?)`/g,'<code>$1</code>');
+  return s;
+}
+
+// ── RENDER ANNOUNCEMENTS ──
+function renderAnnouncements(){
+  const list=g('ann-list');if(!list)return;
+  const anns=(pub.announcements||[]).slice().reverse(); // newest first
+  const seen=priv?.seenAnnouncements||[];
+  if(!anns.length){
+    list.innerHTML='<div style="text-align:center;padding:32px 16px;color:var(--ink3);font-size:14px">No announcements yet.</div>';
+    return;
+  }
+  list.innerHTML=anns.map((a,i)=>{
+    const isNew=!seen.includes(a.id);
+    const dt=a.createdAt?new Date(a.createdAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}):'';
+    return`<div class="ann-card">
+      <div class="ann-card-head">
+        <div style="display:flex;flex-direction:column;gap:4px;min-width:0;flex:1">
+          <h3>${esc(a.title||'Untitled')}</h3>
+          <span class="ann-meta">${dt}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+          ${isNew?'<span class="ann-new-badge">New</span>':''}
+          ${isT?`<button class="btn-d tap" onclick="delAnnouncement('${a.id}')" style="font-size:11px;padding:4px 8px;min-height:30px">✕</button>`:''}
+        </div>
+      </div>
+      <div class="ann-body">${mdToHtml(a.body||'')}</div>
+    </div>`;
+  }).join('');
+  // Update badge counts
+  annUnread=anns.filter(a=>!seen.includes(a.id)).length;
+  updAnnBadge();
+}
+
+function updAnnBadge(){
+  const ab=g('abadge'),ad=g('adot');
+  if(annUnread>0){
+    ab?.classList.remove('hidden');if(ab)ab.textContent=annUnread>9?'9+':annUnread;
+    ad?.classList.remove('hidden');
+  } else {
+    ab?.classList.add('hidden');
+    ad?.classList.add('hidden');
+  }
+}
+
+async function markAnnSeen(){
+  if(!priv||!pub)return;
+  const allIds=(pub.announcements||[]).map(a=>a.id);
+  const already=priv.seenAnnouncements||[];
+  const newIds=allIds.filter(id=>!already.includes(id));
+  if(!newIds.length)return;
+  priv.seenAnnouncements=[...already,...newIds];
+  annUnread=0;updAnnBadge();
+  renderAnnouncements();
+  await ppPriv(['seenAnnouncements','updatedAt']);
+}
+
+window.postAnnouncement=async()=>{
+  if(!isT)return toast('Teacher mode required.','er');
+  const title=g('ann-title').value.trim();
+  const body=g('ann-body').value.trim();
+  if(!title)return toast('Title required.','er');
+  if(!body)return toast('Content required.','er');
+  const id='ann_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+  if(!pub.announcements)pub.announcements=[];
+  pub.announcements.push({id,title,body,createdAt:Date.now()});
+  g('ann-title').value='';g('ann-body').value='';
+  await ppPub();
+  renderAnnouncements();
+  toast('📢 Announcement posted!','ok');
+};
+
+window.delAnnouncement=async(id)=>{
+  if(!isT)return;
+  if(!confirm('Delete this announcement?'))return;
+  pub.announcements=(pub.announcements||[]).filter(a=>a.id!==id);
+  await ppPub();
+  renderAnnouncements();
+  toast('Deleted.','ok');
+};
+
+// ── SVG BRACKET RENDERER ─────────────────────────────────────
+// Layout constants
+const BW=160,BH=52,BPX=64,BPY=28,RLH=20;
+// BW=box width, BH=box height, BPX=horizontal gap, BPY=vertical gap between boxes, RLH=round label height
 
 function renderTree(){
   if(!pub)return;
-  const t=pub.tournaments?.[curTi];const tree=pub.tournamentTrees?.[curTi]||defTree();
+  const t=pub.tournaments?.[curTi];
+  const tree=pub.tournamentTrees?.[curTi]||defTree();
+  const rounds=tree.rounds||[];
   g('tree-ttl').textContent=t?`${t.name} — Bracket`:'Tournament Bracket';
-  g('tree-sub').textContent=t?.name||'';g('add-round-btn').classList.toggle('hidden',!isT);
-  g('tree-wrap').innerHTML=(tree.rounds||[]).map((r,ri)=>`<div class="round"><h4>${esc(r.name)}${isT?`<div style="display:flex;gap:4px"><button class="btn-e tap" style="font-size:11px;padding:4px 8px" onclick="editRound(${ri})">Edit</button><button class="btn-a tap" style="font-size:11px;padding:4px 8px" onclick="addBranch(${ri})">+</button></div>`:''}</h4>${(r.branches||[]).map((b,bi)=>`<div class="match"><div class="mlbl">${esc(b.name)}</div><div class="mp${b.winner===b.player1&&b.winner?' w':''}">${esc(b.player1)}</div><div class="msep">vs</div><div class="mp${b.winner===b.player2&&b.winner?' w':''}">${esc(b.player2)}</div>${b.winner?`<div style="font-size:11.5px;color:var(--green);font-weight:800;margin-top:6px">🏆 ${esc(b.winner)}</div>`:'<div style="font-size:11.5px;color:var(--ink3);margin-top:6px">In progress</div>'}${isT?`<div class="ar" style="margin-top:7px"><button class="btn-e tap" onclick="editBranch(${ri},${bi})">Edit</button><button class="btn-d tap" onclick="delBranch(${ri},${bi})">✕</button></div>`:''}</div>`).join('')}</div>`).join('');
+  g('tree-sub').textContent='';
+  const tbar=g('bk-tbar');
+  if(tbar)tbar.classList.toggle('hidden',!isT);
+
+  // Detect final winner (last round, last branch that has a winner)
+  let finalWinner='';
+  const lastR=rounds[rounds.length-1];
+  if(lastR){const lb=lastR.branches?.[lastR.branches.length-1];if(lb?.winner)finalWinner=lb.winner;}
+
+  // ── COMPUTE HEIGHTS PER ROUND ──
+  // Each round column height determined by number of branches
+  // Rounds left→right, boxes vertically centered in their slot
+  // The slot height for round ri = BH*2 + BPY for round 0, doubles each time
+  const nRounds=rounds.length;
+  if(nRounds===0){g('tree-wrap').innerHTML='<p style="color:var(--ink3);font-size:14px;padding:16px">No rounds yet.</p>';return;}
+
+  // For each round, compute slot height = (BH+BPY)*2^ri (slot per match)
+  // slot height for round ri: s_h(ri) = (BH + BPY) * 2^ri
+  // But we'll use actual branch count to compute total height then evenly space
+  const totalH=computeTotalH(rounds);
+  const svgW=(BW+BPX)*nRounds+BPX/2;
+  const svgH=totalH+RLH+20;
+
+  // Build SVG
+  const NS='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(NS,'svg');
+  svg.setAttribute('width',String(svgW));
+  svg.setAttribute('height',String(svgH));
+  svg.classList.add('bracket-svg');
+  svg.style.minWidth=svgW+'px';
+
+  // defs for drop shadow
+  const defs=document.createElementNS(NS,'defs');
+  const filt=document.createElementNS(NS,'filter');
+  filt.setAttribute('id','bk-shadow');filt.setAttribute('x','-20%');filt.setAttribute('y','-20%');filt.setAttribute('width','140%');filt.setAttribute('height','140%');
+  const fe=document.createElementNS(NS,'feDropShadow');
+  fe.setAttribute('dx','0');fe.setAttribute('dy','2');fe.setAttribute('stdDeviation','3');fe.setAttribute('flood-color','rgba(0,0,0,.1)');
+  filt.appendChild(fe);defs.appendChild(filt);svg.appendChild(defs);
+
+  // Compute box positions
+  const positions=computePositions(rounds,totalH);
+
+  // Draw connectors first (behind boxes)
+  const connG=document.createElementNS(NS,'g');
+  for(let ri=0;ri<nRounds-1;ri++){
+    const nextR=rounds[ri+1];
+    const curBranches=rounds[ri].branches||[];
+    // Pair up: every 2 boxes in round ri feed one box in ri+1
+    for(let bi2=0;bi2<(nextR.branches||[]).length;bi2++){
+      const src1=positions[ri][bi2*2];
+      const src2=positions[ri][bi2*2+1];
+      const dst=positions[ri+1][bi2];
+      if(!dst)continue;
+      const x1=(ri*(BW+BPX))+BPX/2+BW; // right edge of src boxes
+      const x2=(ri+1)*(BW+BPX)+BPX/2;   // left edge of dst box
+      const xm=x1+(x2-x1)*0.55;
+      if(src1!==undefined){
+        const y1=src1+RLH+BH/2;
+        const done1=rounds[ri].branches?.[bi2*2]?.winner;
+        const path=document.createElementNS(NS,'path');
+        path.setAttribute('d',`M${x1},${y1} C${xm},${y1} ${xm},${dst+RLH+BH/2} ${x2},${dst+RLH+BH/2}`);
+        path.setAttribute('fill','none');
+        path.setAttribute('stroke',done1?'#86efac':'rgba(0,0,0,.12)');
+        path.setAttribute('stroke-width',done1?'2':'1.5');
+        path.setAttribute('stroke-dasharray',done1?'none':'4 3');
+        connG.appendChild(path);
+      }
+      if(src2!==undefined){
+        const y2=src2+RLH+BH/2;
+        const done2=rounds[ri].branches?.[bi2*2+1]?.winner;
+        const path=document.createElementNS(NS,'path');
+        path.setAttribute('d',`M${x1},${y2} C${xm},${y2} ${xm},${dst+RLH+BH/2} ${x2},${dst+RLH+BH/2}`);
+        path.setAttribute('fill','none');
+        path.setAttribute('stroke',done2?'#86efac':'rgba(0,0,0,.12)');
+        path.setAttribute('stroke-width',done2?'2':'1.5');
+        path.setAttribute('stroke-dasharray',done2?'none':'4 3');
+        connG.appendChild(path);
+      }
+    }
+  }
+  svg.appendChild(connG);
+
+  // Draw boxes
+  for(let ri=0;ri<nRounds;ri++){
+    const round=rounds[ri];
+    const rx=(ri*(BW+BPX))+BPX/2;
+    // Round label
+    const rlbl=document.createElementNS(NS,'text');
+    rlbl.setAttribute('x',String(rx+BW/2));rlbl.setAttribute('y','14');
+    rlbl.setAttribute('text-anchor','middle');rlbl.setAttribute('class','bn-rnd-lbl');
+    rlbl.textContent=round.name||`Round ${ri+1}`;
+    svg.appendChild(rlbl);
+
+    (round.branches||[]).forEach((b,bi)=>{
+      const by=(positions[ri][bi]||0)+RLH;
+      const isFinal=ri===nRounds-1;
+      const haswinner=!!b.winner;
+
+      // Box background
+      const rect=document.createElementNS(NS,'rect');
+      rect.setAttribute('x',String(rx));rect.setAttribute('y',String(by));
+      rect.setAttribute('width',String(BW));rect.setAttribute('height',String(BH));
+      rect.setAttribute('rx','8');rect.setAttribute('ry','8');
+      rect.setAttribute('fill',isFinal&&haswinner?'#fffbeb':haswinner?'#f0fdf4':'#ffffff');
+      rect.setAttribute('stroke',isFinal&&haswinner?'#fbbf24':haswinner?'#86efac':'rgba(0,0,0,.1)');
+      rect.setAttribute('stroke-width',isFinal&&haswinner?'2':haswinner?'1.5':'1');
+      rect.setAttribute('filter','url(#bk-shadow)');
+      svg.appendChild(rect);
+
+      // Divider line
+      const div=document.createElementNS(NS,'line');
+      div.setAttribute('x1',String(rx+8));div.setAttribute('x2',String(rx+BW-8));
+      div.setAttribute('y1',String(by+BH/2));div.setAttribute('y2',String(by+BH/2));
+      div.setAttribute('stroke','rgba(0,0,0,.06)');div.setAttribute('stroke-width','1');
+      svg.appendChild(div);
+
+      // Player 1
+      const p1Won=b.winner&&b.winner===b.player1;
+      const p1Tbd=!b.player1||b.player1==='TBD';
+      const t1=document.createElementNS(NS,'text');
+      t1.setAttribute('x',String(rx+9));t1.setAttribute('y',String(by+17));
+      t1.setAttribute('class',`bn-player${p1Won?' won':p1Tbd?' tbd':''}`);
+      t1.textContent=truncate(b.player1||'TBD',16);
+      svg.appendChild(t1);
+      if(p1Won){const crown=document.createElementNS(NS,'text');crown.setAttribute('x',String(rx+BW-14));crown.setAttribute('y',String(by+17));crown.setAttribute('class','bn-winner-crown');crown.textContent='🏆';svg.appendChild(crown);}
+
+      // Player 2
+      const p2Won=b.winner&&b.winner===b.player2;
+      const p2Tbd=!b.player2||b.player2==='TBD';
+      const t2=document.createElementNS(NS,'text');
+      t2.setAttribute('x',String(rx+9));t2.setAttribute('y',String(by+BH-9));
+      t2.setAttribute('class',`bn-player${p2Won?' won':p2Tbd?' tbd':''}`);
+      t2.textContent=truncate(b.player2||'TBD',16);
+      svg.appendChild(t2);
+      if(p2Won){const crown=document.createElementNS(NS,'text');crown.setAttribute('x',String(rx+BW-14));crown.setAttribute('y',String(by+BH-9));crown.setAttribute('class','bn-winner-crown');crown.textContent='🏆';svg.appendChild(crown);}
+
+      // Teacher edit overlay — HTML button positioned over box
+      if(isT){
+        const fo=document.createElementNS(NS,'foreignObject');
+        fo.setAttribute('x',String(rx+BW-58));fo.setAttribute('y',String(by+BH-22));
+        fo.setAttribute('width','116');fo.setAttribute('height','24');
+        fo.innerHTML=`<div xmlns="http://www.w3.org/1999/xhtml" style="display:flex;gap:3px">
+          <button onclick="editBranch(${ri},${bi})" style="flex:1;background:rgba(37,99,235,.85);color:#fff;border:none;border-radius:5px;font:700 9.5px Outfit,sans-serif;cursor:pointer;touch-action:manipulation;min-height:22px;padding:2px 5px">Edit</button>
+          <button onclick="delBranch(${ri},${bi})" style="flex:1;background:rgba(220,38,38,.85);color:#fff;border:none;border-radius:5px;font:700 9.5px Outfit,sans-serif;cursor:pointer;touch-action:manipulation;min-height:22px;padding:2px 5px">✕</button>
+        </div>`;
+        svg.appendChild(fo);
+
+        // + match button for this round
+        if(bi===((round.branches||[]).length-1)){
+          const fadd=document.createElementNS(NS,'foreignObject');
+          fadd.setAttribute('x',String(rx+BW/2-32));fadd.setAttribute('y',String(by+BH+4));
+          fadd.setAttribute('width','64');fadd.setAttribute('height','22');
+          fadd.innerHTML=`<div xmlns="http://www.w3.org/1999/xhtml"><button onclick="addBranch(${ri})" style="width:100%;background:rgba(5,150,105,.88);color:#fff;border:none;border-radius:5px;font:700 9.5px Outfit,sans-serif;cursor:pointer;touch-action:manipulation;min-height:22px">+ Match</button></div>`;
+          svg.appendChild(fadd);
+        }
+      }
+    });
+  }
+
+  // Final winner crown at top right if done
+  if(finalWinner){
+    const crownX=(nRounds-1)*(BW+BPX)+BPX/2+BW/2;
+    const crownY=svgH-8;
+    const wt=document.createElementNS(NS,'text');
+    wt.setAttribute('x',String(crownX));wt.setAttribute('y',String(crownY));
+    wt.setAttribute('text-anchor','middle');
+    wt.setAttribute('style','font:800 11px Outfit,sans-serif;fill:#b45309');
+    wt.textContent=`Champion: ${finalWinner}`;
+    svg.appendChild(wt);
+  }
+
+  const wrap=g('tree-wrap');
+  wrap.innerHTML='';
+  wrap.style.minWidth=svgW+'px';
+  wrap.appendChild(svg);
 }
+
+function truncate(s,max){s=String(s||'');return s.length>max?s.slice(0,max-1)+'…':s;}
+
+function computeTotalH(rounds){
+  // Total height is determined by max branches across all rounds
+  let maxB=0;
+  rounds.forEach(r=>{if((r.branches||[]).length>maxB)maxB=(r.branches||[]).length;});
+  return Math.max(maxB,1)*(BH+BPY)-BPY;
+}
+
+function computePositions(rounds,totalH){
+  // For each round, compute y-position of each box
+  // Round 0 has most boxes, later rounds have fewer
+  // Boxes in each round are evenly distributed across totalH
+  const pos=[];
+  rounds.forEach((r,ri)=>{
+    const branches=r.branches||[];
+    const n=Math.max(branches.length,1);
+    const slotH=totalH/n;
+    pos[ri]=branches.map((_,bi)=>Math.round(bi*slotH+(slotH-BH)/2));
+  });
+  return pos;
+}
+
 window.viewTour=i=>{curTi=i;nav('tournament-tree');renderTree();};
 window.editRound=ri=>openRec('tree-round',ri);
 window.editBranch=(ri,bi)=>openRec('tree-branch',`${ri}:${bi}`);
-window.addBranch=ri=>{if(!isT)return;pub.tournamentTrees[curTi].rounds[ri].branches.push({name:'New Match',player1:'TBD',player2:'TBD',winner:''});renderTree();};
+window.addBranch=ri=>{if(!isT)return;(pub.tournamentTrees[curTi].rounds[ri].branches=pub.tournamentTrees[curTi].rounds[ri].branches||[]).push({name:'New Match',player1:'TBD',player2:'TBD',winner:''});renderTree();};
+window.addBranchToLast=()=>{if(!isT)return;const rs=pub.tournamentTrees[curTi].rounds;if(!rs.length)return;addBranch(rs.length-1);};
 window.delBranch=(ri,bi)=>{if(!isT)return;pub.tournamentTrees[curTi].rounds[ri].branches.splice(bi,1);renderTree();};
 window.addRound=()=>{if(!isT)return;pub.tournamentTrees[curTi].rounds.push({name:`Round ${pub.tournamentTrees[curTi].rounds.length+1}`,branches:[{name:'New Match',player1:'TBD',player2:'TBD',winner:''}]});renderTree();};
+window.delLastRound=()=>{if(!isT)return;const rs=pub.tournamentTrees[curTi].rounds;if(rs.length>1)rs.pop();renderTree();};
+
+// ── CELEBRATION ────────────────────────────────────────────
+let confettiAF=null;
+function showCelebration(winner,tourName){
+  g('celeb-name').textContent=winner;
+  g('celeb-tour').textContent=tourName?`🏆 ${tourName}`:'';
+  const el=g('celebration');el.classList.remove('hidden');
+  // Reset & restart animation on trophy (re-trigger)
+  const trophy=el.querySelector('.celeb-trophy');
+  trophy.style.animation='none';
+  requestAnimationFrame(()=>{trophy.style.animation='';});
+  // Confetti
+  stopConfetti();
+  startConfetti();
+}
+window.closeCelebration=()=>{
+  g('celebration').classList.add('hidden');
+  stopConfetti();
+};
+
+function startConfetti(){
+  const cv=g('confetti-cv');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const W=cv.offsetWidth||window.innerWidth;
+  const H=cv.offsetHeight||window.innerHeight;
+  cv.width=W;cv.height=H;
+  const COLS=['#fbbf24','#f59e0b','#3b82f6','#7c3aed','#10b981','#f43f5e','#fff','#fde68a'];
+  const particles=Array.from({length:120},()=>({
+    x:Math.random()*W,y:-20-Math.random()*100,
+    vx:(Math.random()-.5)*3,vy:1.5+Math.random()*3,
+    rot:Math.random()*360,rotV:(Math.random()-.5)*8,
+    w:6+Math.random()*8,h:3+Math.random()*4,
+    col:COLS[Math.floor(Math.random()*COLS.length)],
+    op:1,shape:Math.random()>.5?'rect':'circle',
+    delay:Math.random()*80
+  }));
+  let frame=0;
+  function loop(){
+    ctx.clearRect(0,0,W,H);
+    frame++;
+    particles.forEach(p=>{
+      if(frame<p.delay)return;
+      p.x+=p.vx;p.y+=p.vy;p.rot+=p.rotV;p.vy+=.04;
+      if(p.y>H+20){p.y=-20;p.x=Math.random()*W;p.vy=1.5+Math.random()*2.5;p.op=1;}
+      if(p.y>H*.7)p.op=Math.max(0,p.op-.012);
+      ctx.save();ctx.globalAlpha=p.op;ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.col;
+      if(p.shape==='circle'){ctx.beginPath();ctx.arc(0,0,p.w/2,0,Math.PI*2);ctx.fill();}
+      else{ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);}
+      ctx.restore();
+    });
+    confettiAF=requestAnimationFrame(loop);
+  }
+  loop();
+}
+function stopConfetti(){
+  if(confettiAF){cancelAnimationFrame(confettiAF);confettiAF=null;}
+  const cv=g('confetti-cv');if(cv){const ctx=cv.getContext('2d');ctx.clearRect(0,0,cv.width,cv.height);}
+}
 
 window.addAtt=()=>{if(!isT)return toast('Teacher mode required.','er');if(!priv.attendance)priv.attendance=[];priv.attendance.unshift({date:g('na-date').value||'Unknown',day:g('na-day').value||'—',type:g('na-type').value||'Session',status:g('na-status').value});recalcAtt();render();};
 function recalcAtt(){const a=priv.attendance||[];const p=a.filter(x=>x.status==='present').length;priv.sessionsAttended=p;priv.attendanceRate=a.length?Math.round(p/a.length*100):0;}
@@ -1390,8 +1884,22 @@ window.saveRec=()=>{
   if(type==='tour-status'){const tn=pub.tournaments[index]?.name;if(!priv.tournamentStatus)priv.tournamentStatus={};priv.tournamentStatus[tn]={status:draft.status==='registered'?'registered':'eligible'};priv.tournamentsRegistered=Object.values(priv.tournamentStatus).filter(x=>x.status==='registered').length;}
   if(type==='skill'){const old=Object.keys(priv.skills||{})[index];if(old)delete priv.skills[old];priv.skills[(draft.name||'Skill').trim()]=Math.max(0,Math.min(100,parseInt(draft.pct)||0));}
   if(type==='tree-round'){const r=pub.tournamentTrees[curTi]?.rounds?.[index];if(r)r.name=(draft.name||'Round').trim();}
-  if(type==='tree-branch'){const[ri,bi]=String(index).split(':').map(Number);const b=pub.tournamentTrees[curTi]?.rounds?.[ri]?.branches?.[bi];if(b)Object.assign(b,{name:(draft.name||'Match').trim(),player1:(draft.player1||'TBD').trim(),player2:(draft.player2||'TBD').trim(),winner:(draft.winner||'').trim()});}
-  cm('rec-modal');render();toast('Saved.','ok');
+  if(type==='tree-branch'){
+    const[ri,bi]=String(index).split(':').map(Number);
+    const b=pub.tournamentTrees[curTi]?.rounds?.[ri]?.branches?.[bi];
+    if(b)Object.assign(b,{name:(draft.name||'Match').trim(),player1:(draft.player1||'TBD').trim(),player2:(draft.player2||'TBD').trim(),winner:(draft.winner||'').trim()});
+    // Check if this was the final round's last match and a winner was set
+    const rounds=pub.tournamentTrees[curTi]?.rounds||[];
+    const isLastRound=ri===rounds.length-1;
+    const isLastBranch=bi===(rounds[ri]?.branches||[]).length-1;
+    if(isLastRound&&isLastBranch&&draft.winner){
+      const tName=pub.tournaments?.[curTi]?.name||'';
+      cm('rec-modal');render();renderTree();toast('Saved.','ok');
+      setTimeout(()=>showCelebration(draft.winner,tName),350);
+      return;
+    }
+  }
+  cm('rec-modal');render();renderTree();toast('Saved.','ok');
 };
 
 window.saveProfile=async()=>{const n=g('pr-name').value.trim();if(!n)return toast('Name required.','er');priv.name=n;priv.dob=g('pr-dob').value;await ppPriv(['name','dob','updatedAt']);render();toast('Profile saved.','ok');};
@@ -1399,8 +1907,8 @@ window.saveProfile=async()=>{const n=g('pr-name').value.trim();if(!n)return toas
 // ── TEACHER ──
 window.openTeacher=()=>{g('t-modal').classList.remove('hidden');g('tpw').value='';g('terr').textContent='';setTimeout(()=>g('tpw').focus(),100);};
 window.verifyT=()=>{if(g('tpw').value===TPW){cm('t-modal');enterT();}else g('terr').textContent='Incorrect password.';};
-function enterT(){isT=true;document.body.classList.add('tmode');g('tpill').classList.remove('hidden');g('btn-enter-t').classList.add('hidden');g('btn-exit-t').classList.remove('hidden');g('btn-save-all').classList.remove('hidden');document.querySelectorAll('.tp').forEach(x=>x.classList.add('on'));render();toast('🛡️ Teacher mode enabled.','ok');}
-function exitT(){isT=false;document.body.classList.remove('tmode');g('tpill').classList.add('hidden');g('btn-enter-t').classList.remove('hidden');g('btn-exit-t').classList.add('hidden');g('btn-save-all').classList.add('hidden');document.querySelectorAll('.tp').forEach(x=>x.classList.remove('on'));render();}
+function enterT(){isT=true;document.body.classList.add('tmode');g('tpill').classList.remove('hidden');g('btn-enter-t').classList.add('hidden');g('btn-exit-t').classList.remove('hidden');g('btn-save-all').classList.remove('hidden');document.querySelectorAll('.tp').forEach(x=>x.classList.add('on'));render();renderAnnouncements();toast('🛡️ Teacher mode enabled.','ok');}
+function exitT(){isT=false;document.body.classList.remove('tmode');g('tpill').classList.add('hidden');g('btn-enter-t').classList.remove('hidden');g('btn-exit-t').classList.add('hidden');g('btn-save-all').classList.add('hidden');document.querySelectorAll('.tp').forEach(x=>x.classList.remove('on'));render();renderAnnouncements();}
 g('btn-enter-t').addEventListener('click',openTeacher);
 g('btn-exit-t').addEventListener('click',()=>{exitT();toast('Exited teacher mode.');});
 g('btn-save-all').addEventListener('click',saveAll);
@@ -1587,6 +2095,30 @@ if('visualViewport' in window){
 }
 
 // ── AUTH STATE ──
+// ── CHECK WINNER CELEBRATIONS ON LOGIN ──────────────────────
+function checkWinnerCelebrations(){
+  if(!pub||!priv)return;
+  const seen=priv.seenWinner||{};
+  const tours=pub.tournaments||[];
+  const trees=pub.tournamentTrees||[];
+  for(let i=0;i<tours.length;i++){
+    const t=tours[i];
+    const tree=trees[i];
+    const rounds=tree?.rounds||[];
+    const lastR=rounds[rounds.length-1];
+    const lastB=(lastR?.branches||[])[((lastR?.branches||[]).length)-1];
+    if(lastB?.winner&&!seen[t.name]){
+      // Mark as seen immediately so it only shows once
+      if(!priv.seenWinner)priv.seenWinner={};
+      priv.seenWinner[t.name]=true;
+      ppPriv(['seenWinner','updatedAt']);
+      showCelebration(lastB.winner,t.name||'');
+      return; // show one at a time
+    }
+  }
+}
+
+
 onAuthStateChanged(auth,async user=>{
   if(!user){me=null;g('auth').classList.remove('hidden');g('shell').classList.add('hidden');return;}
   me=user;
@@ -1595,9 +2127,11 @@ onAuthStateChanged(auth,async user=>{
   let snap=await getDoc(pr);
   if(!snap.exists()){await setDoc(pr,privDef(user.displayName||user.email.split('@')[0],user.email));snap=await getDoc(pr);}
   priv=snap.data();
-  if(!priv.attendance)priv.attendance=[];if(!priv.skills)priv.skills={};if(!priv.lessonStatus)priv.lessonStatus={};if(!priv.tournamentStatus)priv.tournamentStatus={};
+  if(!priv.attendance)priv.attendance=[];if(!priv.skills)priv.skills={};if(!priv.lessonStatus)priv.lessonStatus={};if(!priv.tournamentStatus)priv.tournamentStatus={};if(!priv.seenAnnouncements)priv.seenAnnouncements=[];if(!priv.seenWinner)priv.seenWinner={};
   render();subPub();subChat();initSwipe();
   g('auth').classList.add('hidden');g('shell').classList.remove('hidden');
+  // Check for unshown tournament winners at login
+  setTimeout(checkWinnerCelebrations, 800);
 });
 </script>
 </body>
